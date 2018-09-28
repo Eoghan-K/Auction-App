@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+
+<?php
+	include "header.php"
+	include "footer.php"
+	?>
+	
+	
 <html lang="en">
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -26,7 +33,7 @@
 							<div class="col-lg-12">
 								<form id="login-form" action="https://phpoll.com/login/process" method="post" role="form" style="display: block;">
 									<div class="form-group">
-										<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+										<input type="text" name="LoginUsername" id="LoginUsername" tabindex="1" class="form-control" placeholder="Username" value="">
 									</div>
 									<div class="form-group">
 										<input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
@@ -54,16 +61,16 @@
 								</form>
 								<form id="register-form" action="https://phpoll.com/register/process" method="post" role="form" style="display: none;">
 									<div class="form-group">
-										<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+										<input type="text" name="RegisterUsername" id="RegisterUsername" tabindex="1" class="form-control" placeholder="Username" value="">
 									</div>
 									<div class="form-group">
-										<input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+										<input type="email" name="RegisterEmail" id="RegisterEmail" tabindex="1" class="form-control" placeholder="Email Address" value="">
 									</div>
 									<div class="form-group">
-										<input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+										<input type="password" name="RegisterPassword" id="password" tabindex="2" class="form-control" placeholder="Password">
 									</div>
 									<div class="form-group">
-										<input type="password" name="confirm-password" id="confirm-password" tabindex="2" class="form-control" placeholder="Confirm Password">
+										<input type="password" name="ConfirmPassword" id="ConfirmPassword" tabindex="2" class="form-control" placeholder="Confirm Password">
 									</div>
 									<div class="form-group">
 										<div class="row">
@@ -80,3 +87,7 @@
 			</div>
 		</div>
 	</div>
+	
+	
+	
+	
