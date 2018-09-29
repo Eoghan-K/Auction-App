@@ -4,34 +4,33 @@
 
 ?>
 
-<div id="search_wrapper" class="container-fluid">
-    <h2>Don't mind the state of this right now had some computer issues, it will be fixed before upload</h2>
+<div id="search_wrapper" class="container">
     <div id="search_head" class="row">
-        <div id="type" class="col">
-            <a>all</a>
-            <a>Auctions</a>
-            <a>standard sale</a>
-            <a>filters</a>
+        <div class="col" id="type">
+            <div  class="row">
+                <a class="toggleBtns toggleBtn-left col active">all</a>
+                <a class="toggleBtns toggleBtn-center col">Auctions</a>
+                <a class="toggleBtns toggleBtn-right col">standard</a>
+                <a class="toggleBtns toggleBtn-singular col" id="filter">filters</a>
+            </div>
         </div>
         <div id="organize" class="col">
             <div class="row">
-                <div id="sort" class="col">
-                    <span>Sort:</span>
-                    <select class="custom-select my-1 mr-sm-2" id="">
+                <span class="col">Sort:</span>
+                <select class="custom-select my-1 mr-sm-2 col" id="">
                     <option value="1" selected>Relative</option>
                     <option value="2">Low-High</option>
                     <option value="3">High-Low</option>
                     <option value="4">Best Seller</option>
                 </select>
-            </div>
             <div id="view_type" class="col">
                 <img class="icons" src="images/icons/open-iconic-master/svg/list-rich.svg" alt="list">
                 <img class="icons" src="images/icons/open-iconic-master/svg/grid-three-up.svg" alt="grid">
             </div>
         </div>
     </div>
-    <div class="container">
-      <div class="row">
+    </div>
+      <div class="row card_row">
           <?php for($i = 0; $i < 12; $i++){ ?>
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="card">
@@ -45,11 +44,11 @@
             </div>
             <?php if($i % 4 == 3){ ?>
               </div>
-              <div class="row">
+              <div class="row card_row">
             <?php } ?>
             <?php } ?>
         </div>
-    </div>   
+       
 </div>
 
 <?php
