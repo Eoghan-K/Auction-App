@@ -7,7 +7,7 @@ class Search extends DBConnection{
     private $originalData, $data, $dataDecon, $dataSound;
     private $allResults, $filteredResults;
     private $PDOConnection;
-    private $sql;
+    private $sqlSearchSound, $sqlSearchString;
 
     public function __construct($data){
         //clean the data before conducting search
@@ -21,10 +21,16 @@ class Search extends DBConnection{
         $this->dataDecon = explode(" ", $this->data);
         //add wildcards to the data string
         $this->data = "%" . $this->data . "%";
+        //setup arrays to store results
         $this->allResults = array();
         $this->filteredResults = array();
+        //create and get the connection to database
         $this->connectionSetup();
         $this->PDOConnection = $this->getConnection();
+        //create sql statement for strings with original values
+        $this->sqlSearchString = "";
+        //create sql statement for the sounds of the values the user sent
+        $this->sqlSearchSound = "";
 
     }
 
@@ -44,6 +50,7 @@ class Search extends DBConnection{
 
     private function searchString(){
         //this function searches for items names or keyword via unmodified values
+
     }
 
     private function searchSounds(){
