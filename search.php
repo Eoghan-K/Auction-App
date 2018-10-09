@@ -30,24 +30,18 @@
         </div>
     </div>
     </div>
-      <div class="row card_row">
-          <?php for($i = 0; $i < 12; $i++){ ?>
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="card">
-                  <img class="card-img-top" src="images/card.svg" alt="Card image cap">
-                  <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                  </div>
-                </div>
-            </div>
-            <?php if($i % 4 == 3){ ?>
-              </div>
-              <div class="row card_row">
-            <?php } ?>
-            <?php } ?>
-        </div>
+      <?php
+        require('scripts/SearchDB.php');
+        require('scripts/ConstructPage.php');
+        
+        if($_SERVER["REQUEST_METHOD"] == "POST"){
+            //clean the data before conducting search
+          $data = filter_var($_POST['search'], FILTER_SANITIZE_STRING);
+          $search = new SearchDB($data);
+          $results = $search->commenceSearch();
+          $generateItems = new ConstructPage($results, true);
+        }
+      ?>
        
 </div>
 
