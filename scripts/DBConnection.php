@@ -7,7 +7,7 @@
             $this->config =parse_ini_file('Config.ini');
 
             try{
-            $this->PDOConnection = new PDO("mysql:host=".$this->config['dburl']."; dbname=".$this->config['dbname'],$this->config['username'],"" /*$this->config['password']*/);
+            $this->PDOConnection = new PDO("mysql:host=".$this->config['dburl']."; dbname=".$this->config['dbname'],$this->config['username'], $this->config['password']);
                 $this->PDOConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             }catch(PDOException $e){
                 echo $e->getMessage();

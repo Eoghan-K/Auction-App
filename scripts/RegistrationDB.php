@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 include("DBConnection.php");
 /*
     TODO when html pages are setup must redirection to pages upon success or failure 
@@ -55,9 +58,10 @@ class Registration extends DBConnection{
         if($var === null || $var === ""){
             die("data was null");
         }
+        echo "unfiltered " . $var;
         //I want to use this method to clean vars aswell but I cannot get filter_input to work so I might just use it to check if null
-        $this->postCode = filter_input(INPUT_POST, $var, FILTER_SANITIZE_STRING);
-        return $var;
+        echo "filtered " . filter_input(INPUT_POST, $var, FILTER_SANITIZE_STRING);
+        //return $var;
     }
 
     public function beginTransaction(){
