@@ -3,6 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include("DBConnection.php");
+require('ConstructPage.php');
 
 class SearchDB extends DBConnection{
 
@@ -11,7 +12,12 @@ class SearchDB extends DBConnection{
     private $PDOConnection;
     private $sqlSearchSound, $sqlSearchString, $sqlAllDetails, $sqlAllImages;
 
-    public function __construct($data){
+    public function __construct(){
+        echo "Called";
+        //the below Request is to test if I can get this to work with AJAX
+        //if works dont forget to sanitize string
+        $data = $_REQUEST['data'];
+        
         if(isset($data) && $data !== null){
             $this->countItems = 0;
             //originalData is the data unaltered
@@ -32,6 +38,8 @@ class SearchDB extends DBConnection{
             $this->PDOConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             //create the statements for future use
             $this->createSqlStatements();
+            //below is a test to see if I can get this to work with AJAX
+            $this->commenceSearch();
         }else{
             echo "searches must be more than 2 letters long";
         }
@@ -93,7 +101,9 @@ class SearchDB extends DBConnection{
                 }
             }
             
-            return json_encode($this->filteredResults);
+            //return json_encode($this->filteredResults);
+            //below is a test to see if I can get to work with AJAX
+            echo new ConstructPage($this->filteredResults, true);
         }else{
             /*
                 TODO check this before sending user to this script

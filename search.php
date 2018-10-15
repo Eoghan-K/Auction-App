@@ -30,8 +30,9 @@
         </div>
     </div>
     </div>
+    
       <?php
-        require('scripts/SearchDB.php');
+        /*require('scripts/SearchDB.php');
         require('scripts/ConstructPage.php');
         
         if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -40,11 +41,13 @@
           $search = new SearchDB($data);
           $results = $search->commenceSearch();
           $generateItems = new ConstructPage($results, true);
-        }
+        }*/
       ?>
        
 </div>
-
+<script type="text/javascript" src="scripts/AJAXSTESTSCRIPT.js"></script>
+<script type="text/javascript"> testAjax("<?php $data = filter_var($_POST['search'], FILTER_SANITIZE_STRING);
+                                                        echo $data; ?>");</script>
 <?php
 
 include "includes/footer.php";
