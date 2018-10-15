@@ -9,28 +9,32 @@ class SearchDB extends DBConnection{
     private $originalData, $data, $dataDecon, $dataSound;
     private $filteredResults, $allResultsIDs, $countItems;
     private $PDOConnection;
-    private $sqlSearchSound, $sqlSearchString, $sqlAllDetails;
+    private $sqlSearchSound, $sqlSearchString, $sqlAllDetails, $sqlAllImages;
 
     public function __construct($data){
-        $this->countItems = 0;
-        //originalData is the data unaltered
-        $this->originalData = $data;
-         //add wildcards to the data string
-        $this->data = '%' . $data . '%';
-        //sound out the entire string (must do this before adding wildcards to the data string)
-        $this->dataSound = "%" . metaphone($this->originalData) . "%";
-        //split the string up into individual words if there are multiple (must do this before adding wildcards to data string)
-        $this->dataDecon = explode(" ", $this->originalData);
+        if(isset($data) && $data !== null){
+            $this->countItems = 0;
+            //originalData is the data unaltered
+            $this->originalData = $data;
+            //add wildcards to the data string
+            $this->data = '%' . $data . '%';
+            //sound out the entire string (must do this before adding wildcards to the data string)
+            $this->dataSound = "%" . metaphone($this->originalData) . "%";
+            //split the string up into individual words if there are multiple (must do this before adding wildcards to data string)
+            $this->dataDecon = explode(" ", $this->originalData);
        
-        //setup arrays to store results
-        $this->allResultsIDs = array();
-        $this->filteredResults = array();
-        //create and get the connection to database
-        $this->connectionSetup();
-        $this->PDOConnection = $this->getConnection();
-        $this->PDOConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        //create the statements for future use
-        $this->createSqlStatements();
+            //setup arrays to store results
+            $this->allResultsIDs = array();
+            $this->filteredResults = array();
+            //create and get the connection to database
+            $this->connectionSetup();
+            $this->PDOConnection = $this->getConnection();
+            $this->PDOConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            //create the statements for future use
+            $this->createSqlStatements();
+        }else{
+            echo "searches must be more than 2 letters long";
+        }
     }
     
     private function createSqlStatements(){
@@ -54,19 +58,20 @@ class SearchDB extends DBConnection{
 		JOIN item_images AS img ON i.item_id=img.item_id AND img.item_image_num=1
         WHERE sound.item_name_sounds LIKE :input OR sound.keyword_sounds LIKE :input';
         
-        //this sql statement gets the rest of the items details that were excluded from previous request
-        /*
-            inorder to save space the user will have to select an item to request further data 
+        /* this sql statement gets the rest of the items details that were excluded from previous request,
+            inorder to save space and request times the user will have to select an item to request further data 
             from the server details like item description, seller details 
             and any extra images the users has supplied.
             These details can be quite large especially when the user could have 100s-1000s of results
             so requesting them only when needed will save space and hopefully reduce request times.
+            NB inorder to keep MYSQL happy we have grouped by image item ids but the grouping is not important.
         */
-        $this->sqlAllDetails = "SELECT i.item_description, img.item_images_id, img.image_name, img.image_url, seller.user_id, seller.username
-        FROM item AS i 
+        $this->sqlAllDetails = "SELECT i.item_description, img.item_images_id, img.image_name, img.image_url, seller.user_id, seller.username, AVG(userRating.rating) AS rating
+        FROM item AS i
         JOIN users AS seller ON i.seller_id=seller.user_id
+        JOIN user_rating  AS userRating ON i.seller_id = userRating.user_id
         JOIN item_images AS img ON i.item_id=img.item_id
-        WHERE i.item_id = :input";
+        WHERE i.item_id = :input GROUP BY img.item_images_id";
     }
 
     public function commenceSearch(){
@@ -121,18 +126,23 @@ class SearchDB extends DBConnection{
     }
     
     private function inspectAndCompileResults($results, $type){
+        //no need to keep track of images so store a temp var here
+        $image_ids = array();
         if(!isset($results) || !isset($type)){
             exit("SearchDB: please ensure all data has been passed to function");
         }
-        //this function filters out any redundant entries and compiles results into one array
-        foreach($results as $key=>$val){
-            if(!in_array($val['item_id'], $this->allResultsIDs)){
-                //add item id to the allResultsIDs inoreder to keep track of what has already been added
-                Array_Push($this->allResultsIDs, $val['item_id']);
-                //inserting array inside of array of givin index
-                $this->filteredResults[$this->countItems] = array();
-                
-                if($type != 'missingDetails'){
+
+        if($type !== 'missingDetails'){
+            //this function filters out any redundant entries and compiles results into one array
+            foreach($results as $key=>$val){
+                if(!in_array($val['item_id'], $this->allResultsIDs)){
+                    //add item id to the allResultsIDs inoreder to keep track of what has already been added
+                    Array_Push($this->allResultsIDs, $val['item_id']);
+                    //inserting array inside of array of givin index
+                    $this->filteredResults[$this->countItems] = array();
+                    //TODO figure out a clean way of reducing the number of checks as checking every loop is very inefficent,
+                    //I would assume checks with bools are faster so that maybe an option but I believe there maybe more than one type in here 
+                    
                     //store all items in array with a key
                     $this->filteredResults[$this->countItems]['item_id'] = $val['item_id'];
                     $this->filteredResults[$this->countItems]['item_name'] = $val['item_name'];
@@ -142,12 +152,28 @@ class SearchDB extends DBConnection{
                     $this->filteredResults[$this->countItems]['image_name'] = $val['image_name'];
                     $this->filteredResults[$this->countItems]['image_url'] = $val['image_url'];
                     $this->filteredResults[$this->countItems]['price'] = $val['starting_price'];
+                    //increase the index
                     $this->countItems++;
-                }else{
-                   
                 }
-                
             }
+        }else{
+            //NOTE might actually split querys and get images seperatly but the most images that will return is 4 so it may be unnecessary 
+            //this should only have one valid result
+           $this->filteredResults[0]['full_description'] = $val['item_description'];
+           $this->filteredResults[0]['seller_id'] = $val['user_id'];
+           $this->filteredResults[0]['seller_name'] = $val['username'];
+           $this->filteredResults[0]['rating'] = $val['rating']; 
+           //there could be multiple images related to the one item
+           foreach($results as $key=>$val){
+                if(!in_array($val['image_id'], $image_ids)){
+                    Array_Push($image_ids, $val['image_id']);
+                    //get all images 
+                    $this->filteredResults[$this->countItems]['image_id'] = $val['item_images_id'];
+                    $this->filteredResults[$this->countItems]['image_name'] = $val['image_name'];
+                    $this->filteredResults[$this->countItems]['image_url'] = $val['image_url'];
+                    $this->countItems++;
+            }
+           }
         }
     }
     
