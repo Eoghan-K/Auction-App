@@ -152,17 +152,17 @@ class SearchDB extends DBConnection{
                     Array_Push($this->allResultsIDs, $val['item_id']);
                     //inserting array inside of array of givin index
                     $this->filteredResults[$this->countItems] = array();
-                    //TODO figure out a clean way of reducing the number of checks as checking every loop is very inefficent,
-                    //I would assume checks with bools are faster so that maybe an option but I believe there maybe more than one type in here 
                     
-                    //store all items in array with a key
+
+                    //clean all variables to ensure nothing malicious made it into the database and store all items in array with a key
                     $this->filteredResults[$this->countItems]['item_id'] = $val['item_id'];
-                    $this->filteredResults[$this->countItems]['item_name'] = $val['item_name'];
-                    $this->filteredResults[$this->countItems]['short_description'] = $val['item_short_description'];
+                    $this->filteredResults[$this->countItems]['item_name'] = $this->checkAndCleanString($val['item_name']);
+                    $this->filteredResults[$this->countItems]['short_description'] = $this->checkAndCleanString($val['item_short_description']);
                     $this->filteredResults[$this->countItems]['date'] = $val['date_listed'];
                     $this->filteredResults[$this->countItems]['auction_id'] = $val['auction_id'];
-                    $this->filteredResults[$this->countItems]['image_name'] = $val['image_name'];
-                    $this->filteredResults[$this->countItems]['image_url'] = $val['image_url'];
+                    $this->filteredResults[$this->countItems]['image_name'] = $this->checkAndCleanString($val['image_name']);
+                    //image url is not an actual url so clean it as if it was a normal string
+                    $this->filteredResults[$this->countItems]['image_url'] = $this->checkAndCleanString($val['image_url']);
                     $this->filteredResults[$this->countItems]['price'] = $val['starting_price'];
                     //increase the index
                     $this->countItems++;
@@ -171,9 +171,9 @@ class SearchDB extends DBConnection{
         }else{
             //NOTE might actually split querys and get images seperatly but the most images that will return is 4 so it may be unnecessary 
             //this should only have one valid result
-           $this->filteredResults[0]['full_description'] = $val['item_description'];
+           $this->filteredResults[0]['full_description'] = $this->checkAndCleanString($val['item_description']);
            $this->filteredResults[0]['seller_id'] = $val['user_id'];
-           $this->filteredResults[0]['seller_name'] = $val['username'];
+           $this->filteredResults[0]['seller_name'] = $this->checkAndCleanString($val['username']);
            $this->filteredResults[0]['rating'] = $val['rating']; 
            //there could be multiple images related to the one item
            foreach($results as $key=>$val){
@@ -181,14 +181,33 @@ class SearchDB extends DBConnection{
                     Array_Push($image_ids, $val['image_id']);
                     //get all images 
                     $this->filteredResults[$this->countItems]['image_id'] = $val['item_images_id'];
-                    $this->filteredResults[$this->countItems]['image_name'] = $val['image_name'];
-                    $this->filteredResults[$this->countItems]['image_url'] = $val['image_url'];
+                    $this->filteredResults[$this->countItems]['image_name'] = $this->checkAndCleanString($val['image_name']);
+                    $this->filteredResults[$this->countItems]['image_url'] = $this->checkAndCleanString($val['image_url']);
                     $this->countItems++;
             }
            }
         }
     }
     
+    //this function checks if null or empty and if not then proceeds to clean variables of potentially dangerious chars
+    private function checkAndCleanString($var){
+
+        if($var === null || $var === ""){
+            //TODO redirect to registration page and inform the user to fill in missing data
+            die("data was null");
+        }
+        
+        //I want to use this method to clean vars aswell but I cannot get filter_input to work so I might just use it to check if null
+        $var = filter_var($var, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
+
+        $var = stripslashes($var);
+
+        if($var === false || $var === ""){
+            //TODO redirect to page telling user to enter valid data
+            die("please enter valid:" + $type);  
+        }
+        return $var;
+    }
 
 }
 

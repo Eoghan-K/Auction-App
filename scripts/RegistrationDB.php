@@ -10,7 +10,7 @@ include("DBConnection.php");
 
 class Registration extends DBConnection{
     private $firstName,$secondName,$username;
-    private $password;
+    private $passwordVal;
     private $homeAddress, $emailAddress, $phoneNumber, $postCode;
     private $sql;
     private $PDOConnection;
@@ -21,48 +21,53 @@ class Registration extends DBConnection{
         //ensure all user posted data is safe to store in database
         $stringArr = $this->sanitizeVariables();
         //create sql statement
-        $this->sql = "INSERT INTO user (firstname, secondname, username) VALUES (:firstname, :secondname, :username)";
+        //alias being used because password seems to be a sql keyword
+        $this->sql = "INSERT INTO users (first_name, second_name, username, user_password, email_address, home_address, post_code, phone_number)
+                    VALUES (:firstname, :secondname, :username, :passwordVal, :email, :homeAddress, :postCode, :phoneNumber)";
         $this->config = parse_ini_file('../Config.ini');
         
     }
 
     private function sanitizeVariables(){
         //before bothering to even clean the items
-        $this->checkAndCleanString($_POST['firstname']);
-        $this->checkAndCleanString($_POST['secondname']);
-        $this->checkAndCleanString($_POST['username']);
-        //$this->checkVar($_POST['password']);
-        //$this->checkVar($_POST['email']);
-        //$this->checkVar($_POST['homeAddress']);
-        //$this->checkVar($_POST['postCode']);
-        
-        //this method cleans variables of illegal Chars
-        //begin filering strings
-        //$this->firstName = filter_var($_POST['firstname'], FILTER_SANITIZE_STRING);
-        //$this->secondName = filter_var($_POST['secondname'], FILTER_SANITIZE_STRING);
-        //$this->username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
-        //$this->password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
-        //$this->emailAddress = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-        //$this->homeAddress = filter_var($_POST['homeAddress'], FILTER_SANITIZE_STRING);
-        //$this->postCode = filter_var($_POST['postCode'], FILTER_SANITIZE_STRING);
-        
-        //stripslashes($data)
-       
-        
+        $this->firstName = $this->checkAndCleanString($_POST['firstname']);
+        $this->secondName = $this->checkAndCleanString($_POST['secondname']);
+        $this->username = $this->checkAndCleanString($_POST['username']);
+        $this->passwordVal = $this->checkAndCleanString($_POST['password']);
+        $this->emailAddress =$this->checkAndCleanString($_POST['email'], "email");
+        $this->homeAddress = $this->checkAndCleanString($_POST['homeAddress']);
+        $this->postCode = $this->checkAndCleanString($_POST['postCode']);
+        $this->phoneNumber = $this->checkAndCleanString($_POST['phoneNumber'], "phone number");
+
          //hash and salt password using blowfish crypt
-        $this->password = crypt($this->password, $this->config['salt']);
+        $this->passwordVal = crypt($this->passwordVal, $this->config['salt']);
     }
 
-    private function checkAndCleanString($var){
+    //this function checks if null or empty and if not then proceeds to clean variables of potentially dangerious chars
+    private function checkAndCleanString($var, $type = "simpleString"){
 
         if($var === null || $var === ""){
+            //TODO redirect to registration page and inform the user to fill in missing data
             die("data was null");
         }
         
         //I want to use this method to clean vars aswell but I cannot get filter_input to work so I might just use it to check if null
-        echo "filtered " . filter_var($var, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
+        if($type === "email"){
+            $var = filter_var($var, FILTER_SANITIZE_STRING, FILTER_SANITIZE_EMAIL);
+            $var = filter_var($var, FILTER_VALIDATE_EMAIL);
+        }else if($type === "phone number"){
+            $var = filter_var($var, FILTER_SANITIZE_INT, FILTER_VALIDATE_INT);
+        }else{
+            $var = filter_var($var, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
+        }
 
-        //return $var;
+        $var = stripslashes($var);
+
+        if($var === false || $var === ""){
+            //TODO redirect to page telling user to enter valid data
+            die("please enter valid:" + $type);  
+        }
+        return $var;
     }
 
     public function beginTransaction(){
@@ -75,7 +80,7 @@ class Registration extends DBConnection{
             //prepare statement
             $query = $this->PDOConnection->prepare($this->sql);
             //bind variables to sql statement and execute statement
-            //$query->execute(array('firstname'=>$this->firstName, 'secondname'=>$this->secondName, 'username'=>$this->username));
+            $query->execute(array('firstname'=>$this->firstName, 'secondname'=>$this->secondName, 'username'=>$this->username, 'passwordVal'=>$this->passwordVal, 'email'=>$this->emailAddress, 'homeAddress'=>$this->homeAddress, 'postCode'=>$this->postCode, 'phoneNumber'=>$this->phoneNumber));
         }catch(PDOException $e){
             //WHEN something fails report it
             echo("The query failed: " . $e->getMessage());
