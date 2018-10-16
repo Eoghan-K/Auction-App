@@ -58,9 +58,10 @@ class Registration extends DBConnection{
         if($var === null || $var === ""){
             die("data was null");
         }
-        echo "unfiltered " . $var;
+        
         //I want to use this method to clean vars aswell but I cannot get filter_input to work so I might just use it to check if null
-        echo "filtered " . filter_input(INPUT_POST, $var, FILTER_SANITIZE_STRING);
+        echo "filtered " . filter_var($var, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
+
         //return $var;
     }
 

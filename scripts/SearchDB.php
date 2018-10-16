@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include("DBConnection.php");
-require('ConstructPage.php');
+
 
 class SearchDB extends DBConnection{
 
@@ -11,12 +11,14 @@ class SearchDB extends DBConnection{
     private $filteredResults, $allResultsIDs, $countItems;
     private $PDOConnection;
     private $sqlSearchSound, $sqlSearchString, $sqlAllDetails, $sqlAllImages;
+    private $isGrid;
 
     public function __construct(){
-        echo "Called";
+        
         //the below Request is to test if I can get this to work with AJAX
         //if works dont forget to sanitize string
-        $data = $_REQUEST['data'];
+        $data = $_POST['query'];
+        $this->isGrid = $_POST['grid'];
         
         if(isset($data) && $data !== null){
             $this->countItems = 0;
@@ -101,9 +103,9 @@ class SearchDB extends DBConnection{
                 }
             }
             
-            //return json_encode($this->filteredResults);
+            echo json_encode($this->filteredResults);
             //below is a test to see if I can get to work with AJAX
-            echo new ConstructPage($this->filteredResults, true);
+            //$this->pageConstructer = new ConstructPage(json_encode($this->filteredResults), $this->isGrid);
         }else{
             /*
                 TODO check this before sending user to this script
@@ -190,4 +192,5 @@ class SearchDB extends DBConnection{
 
 }
 
+$newS = new SearchDB();
 ?>

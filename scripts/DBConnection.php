@@ -4,7 +4,7 @@
         private $PDOConnection;
 
         public function connectionSetup(){
-            $this->config =parse_ini_file('Config.ini');
+            $this->config =parse_ini_file('../Config.ini');
 
             try{
             $this->PDOConnection = new PDO("mysql:host=".$this->config['dburl']."; dbname=".$this->config['dbname'],$this->config['username'], $this->config['password']);
