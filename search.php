@@ -24,35 +24,34 @@
                     <option value="4">Best Seller</option>
                 </select>
             <div id="view_type" class="col">
-                <img class="icons" src="images/icons/open-iconic-master/svg/list-rich.svg" alt="list">
-                <img class="icons" src="images/icons/open-iconic-master/svg/grid-three-up.svg" alt="grid">
+                <img class="icons" src="images/icons/open-iconic-master/svg/list-rich.svg" alt="list" onClick="loadInformation(null, false,false)">
+                <img class="icons" src="images/icons/open-iconic-master/svg/grid-three-up.svg" alt="grid" onClick="loadInformation(null, true,false)">
             </div>
         </div>
     </div>
     </div>
-      <div class="row card_row">
-          <?php for($i = 0; $i < 12; $i++){ ?>
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="card">
-                  <img class="card-img-top" src="images/card.svg" alt="Card image cap">
-                  <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                  </div>
-                </div>
-            </div>
-            <?php if($i % 4 == 3){ ?>
-              </div>
-              <div class="row card_row">
-            <?php } ?>
-            <?php } ?>
-        </div>
+    <div class="col" id="test">
+        
+    </div>
+      <?php
+        /*require('scripts/SearchDB.php');
+        require('scripts/ConstructPage.php');
+        
+        if($_SERVER["REQUEST_METHOD"] == "POST"){
+            //clean the data before conducting search
+          $data = filter_var($_POST['search'], FILTER_SANITIZE_STRING);
+          $search = new SearchDB($data);
+          $results = $search->commenceSearch();
+          $generateItems = new ConstructPage($results, true);
+        }*/
+      ?>
        
 </div>
-
-<?php
-
-include "includes/footer.php";
-
-?>
+    <!-- not using footer as I need to organize scripts that are unneeded in other pages -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="scripts/AJAXSTESTSCRIPT.js"></script>
+    <script type="text/javascript"> window.loadInformation("<?php echo $_POST['search']; ?>", true,true);</script>
+</body>
+</html>
