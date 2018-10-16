@@ -1,92 +1,118 @@
+<?PHP
+require_once("./include/membersite_config.php");
+
+if(isset($_POST['submitted']))
+{
+   if($fgmembersite->Login())
+   {
+        $fgmembersite->RedirectToURL("index.php");
+   }
+}
+
+
+    include "includes/header.php";
+
+
+?>
 <!DOCTYPE html>
+<html lang="en-US">
+<head>
+      <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+      <title>Login</title>
+      <link rel="STYLESHEET" type="text/css" href="style/fg_membersite.css" />
+      <script type='text/javascript' src='scripts/gen_validatorv31.js'></script>
+</head>
+<body>
 
-<?php
-	include "header.php"
-	include "footer.php"
-	?>
-	
-	
-<html lang="en">
+<div id='fg_membersite'>
+<form id='login' action='<?php echo $fgmembersite->GetSelfScript(); ?>' method='post' accept-charset='UTF-8'>
+<fieldset >
+<legend>Login</legend>
 
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<!------ Include the above in your HEAD tag ---------->
+<input type='hidden' name='submitted' id='submitted' value='1'/>
 
-<div class="container">
-    	<div class="row">
-			<div class="col-md-6 col-md-offset-3">
-				<div class="panel panel-login">
-					<div class="panel-heading">
-						<div class="row">
-							<div class="col-xs-6">
-								<a href="#" class="active" id="login-form-link">Login</a>
-							</div>
-							<div class="col-xs-6">
-								<a href="#" id="register-form-link">Register</a>
-							</div>
-						</div>
-						<hr>
-					</div>
-					<div class="panel-body">
-						<div class="row">
-							<div class="col-lg-12">
-								<form id="login-form" action="https://phpoll.com/login/process" method="post" role="form" style="display: block;">
-									<div class="form-group">
-										<input type="text" name="LoginUsername" id="LoginUsername" tabindex="1" class="form-control" placeholder="Username" value="">
-									</div>
-									<div class="form-group">
-										<input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
-									</div>
-									<div class="form-group text-center">
-										<input type="checkbox" tabindex="3" class="" name="remember" id="remember">
-										<label for="remember"> Remember Me</label>
-									</div>
-									<div class="form-group">
-										<div class="row">
-											<div class="col-sm-6 col-sm-offset-3">
-												<input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In">
-											</div>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="row">
-											<div class="col-lg-12">
-												<div class="text-center">
-													<a href="https://phpoll.com/recover" tabindex="5" class="forgot-password">Forgot Password?</a>
-												</div>
-											</div>
-										</div>
-									</div>
-								</form>
-								<form id="register-form" action="https://phpoll.com/register/process" method="post" role="form" style="display: none;">
-									<div class="form-group">
-										<input type="text" name="RegisterUsername" id="RegisterUsername" tabindex="1" class="form-control" placeholder="Username" value="">
-									</div>
-									<div class="form-group">
-										<input type="email" name="RegisterEmail" id="RegisterEmail" tabindex="1" class="form-control" placeholder="Email Address" value="">
-									</div>
-									<div class="form-group">
-										<input type="password" name="RegisterPassword" id="password" tabindex="2" class="form-control" placeholder="Password">
-									</div>
-									<div class="form-group">
-										<input type="password" name="ConfirmPassword" id="ConfirmPassword" tabindex="2" class="form-control" placeholder="Confirm Password">
-									</div>
-									<div class="form-group">
-										<div class="row">
-											<div class="col-sm-6 col-sm-offset-3">
-												<input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register Now">
-											</div>
-										</div>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class='short_explanation'>* required fields</div>
+
+<div><span class='error'><?php echo $fgmembersite->GetErrorMessage(); ?></span></div>
+<div class='container'>
+    <label for='username' >UserName*:</label><br/>
+    <input type='text' name='username' id='username' value='<?php echo $fgmembersite->SafeDisplay('username') ?>' maxlength="50" /><br/>
+    <span id='login_username_errorloc' class='error'></span>
+</div>
+<div class='container'>
+    <label for='password' >Password*:</label><br/>
+    <input type='password' name='password' id='password' maxlength="50" /><br/>
+    <span id='login_password_errorloc' class='error'></span>
+</div>
+
+<div class='container'>
+    <input type='submit' name='Submit' value='Submit' />
+</div>
+<div class='short_explanation'><a href='reset-pwd-req.php'>Forgot Password?</a></div>
+</fieldset>
+</form>
+
+
+<script type='text/javascript'>
+// <![CDATA[
+
+    var frmvalidator  = new Validator("login");
+    frmvalidator.EnableOnPageErrorDisplay();
+    frmvalidator.EnableMsgsTogether();
+
+    frmvalidator.addValidation("username","req","Please provide your username");
+    
+    frmvalidator.addValidation("password","req","Please provide the password");
+
+// ]]>
+</script>
+</div>
+
+<div class="container-fluid bg-light py-3">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+                <div class="card card-body">
+                    <h3 class="text-center mb-4">Sign-up</h3>
+                    <div class="alert alert-danger">
+                        <a class="close font-weight-light" data-dismiss="alert" href="#">×</a>Password is too short.
+                    </div>
+                    <fieldset>
+                        <div class="form-group has-error">
+                            <input class="form-control input-lg" placeholder="E-mail Address" name="email" type="text">
+                        </div>
+                        <div class="form-group has-success">
+                            <input class="form-control input-lg" placeholder="Password" name="password" value="" type="password">
+                        </div>
+                        <div class="form-group has-success">
+                            <input class="form-control input-lg" placeholder="Confirm Password" name="password" value="" type="password">
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control input-lg">
+                                <option selecterd="">Sequrity Question</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control input-lg" placeholder="Sequrity Answer" name="answer" value="" type="text">
+                        </div>
+                        <div class="checkbox">
+                            <label class="small">
+                                <input name="terms" type="checkbox">I have read and agree to the <a href="#">terms of service</a>
+                            </label>
+                        </div>
+                        <input class="btn btn-lg btn-primary btn-block" value="Sign Me Up" type="submit">
+                    </fieldset>
+                </div>
+        </div>
+    </div>
+
+
+
+
+
+</body>
+</html>
+
+
 	
 	
 	
