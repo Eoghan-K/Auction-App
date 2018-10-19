@@ -56,7 +56,7 @@ class ConstructPage{
     
     private function createGridview(){
         
-        //get the number of items in an array minus 1 to match array index
+        //get the number of items in an array
         $numItems = count($this->itemArray);
         //calculate the max number of rows needed to display those items
         $numOfRows = ceil($numItems / 4);
@@ -111,34 +111,25 @@ class ConstructPage{
     
     private function createListview(){
        
-        //get the number of items in an array minus 1 to match array index
+        //get the number of items in an array
         $numItems = count($this->itemArray);
         //calculate the max number of rows needed to display those items
         $numOfRows = ceil($numItems / 4);
         
-        //echo "number of items: ".$numItems . "number of rows " . $numOfRows;
-        //index is used to keep track of the currently selected item in the array, might make this global and also use it to change pages.
-        $indexCols = 0;
-        $currentRowItem = 0;
-        $indexRows = 0;
+        //store current item row to keep track of how many items are needed for the next page(next page not yet implemented)
+        $currentItem = 0;
+        
         
         //loop for rows
-        while($indexRows < $numOfRows && $numOfRows > 0){
+        for($i = 0; $i < $numItems; $i++){
             ?><div class='row card_row'><?php
-           //get the remainder which is number of items minus the index columns
-            $remainder = ($numItems-$indexCols);
-             //if remainder is greater than 4 return 4 else return remainder
-            $currentRowItem = $remainder > 4 ? 4 : $remainder;
-           
-            //loop for individual items
-            while($currentRowItem > 0){
                 //TODO add image name and short description to db
-                $imageName = $this->itemArray[$indexCols]['image_name'];
-                $shortDescription = $this->itemArray[$indexCols]['short_description'];
+                $imageName = $this->itemArray[$i]['image_name'];
+                $shortDescription = $this->itemArray[$i]['short_description'];
                 //NOTE the server should hold the path and the database should hold the name on server
                 //this is so if file structer is ever changed the database will not have to be updated
-                $imgUrl = $this->itemArray[$indexCols]['image_url'];
-                $itemName = $this->itemArray[$indexCols]['item_name'];
+                $imgUrl = $this->itemArray[$i]['image_url'];
+                $itemName = $this->itemArray[$i]['item_name'];
                 
                 //now that all nessicary data is gathered its time to print to screen
                 
@@ -151,16 +142,8 @@ class ConstructPage{
                           </div>
                         </div>
                     </a><?php
-                
-                //take away the number of rows needed and increase the current column number
-                $currentRowItem--;
-                $indexCols++;
-                
+                ?></div><?php 
             }
-            $indexRows++;
-            ?></div><?php 
-        
-        }
     }
 }
 
