@@ -9,20 +9,17 @@ class ConstructPage{
     private $config;
     private $htmlString;
     
-    public function __construct($encodedValues, $isGrid){
+    public function __construct($encodedValues = " ", $isGrid = true){
         $this->config =parse_ini_file('../Config.ini');
-        //if the grid value passed in is set then set isGrid to specified else just set it to the default which is true
-        if(isset($isGrid)){
-            $this->isGrid = $isGrid;
-        }else{
-            //default to true
-            $this->isGrid = true;
-        }
         
-        //initialize array
-        $this->itemArray = array();
-        //decode the array passed in and store it in itemArray
-        $this->itemArray = json_decode($encodedValues,true);
+        $this->isGrid = $isGrid;
+        //if no encoded values are set then attempt to use the itemarray
+        if(isset($encodedValues)){
+            //initialize array
+            $this->itemArray = array();
+            //decode the array passed in and store it in itemArray
+            $this->itemArray = json_decode($encodedValues,true);
+        }
         //construct the page
         $this->constructLayout();
     }
@@ -87,7 +84,7 @@ class ConstructPage{
                 
                 //now that all nessicary data is gathered its time to print to screen
                 
-                ?><a href="<?=$itemUrl ?>" class="col-12 col-sm-6 col-md-3">
+                ?><a href="#" class="col-12 col-sm-6 col-md-3">
                         <div class="card">
                           <img class="card-img-top" src="<?php echo $this->config["saleImages"] . $imgUrl;?>" alt="<?=$imageName ?>">
                           <div class="card-body">
@@ -121,8 +118,8 @@ class ConstructPage{
         
         
         //loop for rows
-        for($i = 0; $i < $numItems; $i++){
-            ?><div class='row card_row'><?php
+        for($i = 0; $i < $numItems; $i++){ ?>
+            <a class='row card_row' href="#"><?php
                 //TODO add image name and short description to db
                 $imageName = $this->itemArray[$i]['image_name'];
                 $shortDescription = $this->itemArray[$i]['short_description'];
@@ -133,17 +130,20 @@ class ConstructPage{
                 
                 //now that all nessicary data is gathered its time to print to screen
                 
-                ?><a href="<?=$itemUrl ?>" class="col-12 col-sm-6 col-md-3">
-                        <div class="card">
-                          <img class="card-img-top" src="<?php echo $this->config["saleImages"] . $imgUrl;?>" alt="<?=$imageName ?>">
-                          <div class="card-body">
-                            <h5 class="card-title"><?=$itemName ?></h5>
-                            <p class="card-text"><!--<?=$shortDescription ?>--> This has now changed to list view in my mind some day in reality</p>
-                          </div>
-                        </div>
-                    </a><?php
-                ?></div><?php 
-            }
+                ?>
+                
+                <div class="card" class="col-4">
+                    <img class="card-img-top" src="<?php echo $this->config["saleImages"] . $imgUrl;?>" alt="<?=$imageName ?>">
+                </div>
+                <div  class="col-8">
+                    <div class="card-body">
+                        <h5 class="card-title"><?=$itemName ?></h5>
+                        <p class="card-text"><?=$shortDescription ?></p>
+                    </div>
+                </div>
+            </a>
+                <?php 
+        }
     }
 }
 

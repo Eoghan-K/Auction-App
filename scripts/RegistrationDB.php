@@ -19,7 +19,7 @@ class Registration extends DBConnection{
     
     public function __construct(){
         //ensure all user posted data is safe to store in database
-        $stringArr = $this->sanitizeVariables();
+        $stringArr = $this->validateAndSanitize();
         //create sql statement
         //alias being used because password seems to be a sql keyword
         $this->sql = "INSERT INTO users (first_name, second_name, username, user_password, email_address, home_address, post_code, phone_number)
@@ -28,8 +28,8 @@ class Registration extends DBConnection{
         
     }
 
-    private function sanitizeVariables(){
-        //before bothering to even clean the items
+    protected function validateAndSanitize(){
+        //check that variables actually exist and if so clean them
         $this->firstName = $this->checkAndCleanString($_POST['firstname']);
         $this->secondName = $this->checkAndCleanString($_POST['secondname']);
         $this->username = $this->checkAndCleanString($_POST['username']);

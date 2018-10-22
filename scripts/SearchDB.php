@@ -12,6 +12,9 @@ class SearchDB extends DBConnection{
     private $PDOConnection;
     private $sqlSearchSound, $sqlSearchString, $sqlAllDetails, $sqlAllImages;
     private $isGrid;
+    //due to the way I have set up my files errors will not display on page but will instead break the entire script
+    //so to remedy this all errors will be sent in the results array and printed out that way, unless it is required to kill the scri
+    private $error;
 
     public function __construct(){
         
@@ -19,7 +22,6 @@ class SearchDB extends DBConnection{
         //if works dont forget to sanitize string
         $data = $_POST['query'];
         $this->isGrid = $_POST['grid'];
-        
         if(isset($data) && $data !== null){
             $this->countItems = 0;
             //originalData is the data unaltered
@@ -48,6 +50,7 @@ class SearchDB extends DBConnection{
     }
     
     private function createSqlStatements(){
+        //NOTE all sql statements need to be optimized, will do once presentation is over and done with
         //create sql statement for strings with original values
         //select necessary fields from item if the item name or keywords match (in some way (contains wildcards)) to the users input
         $this->sqlSearchString = "SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.auction_id, img.image_url, img.image_name,
@@ -156,13 +159,13 @@ class SearchDB extends DBConnection{
 
                     //clean all variables to ensure nothing malicious made it into the database and store all items in array with a key
                     $this->filteredResults[$this->countItems]['item_id'] = $val['item_id'];
-                    $this->filteredResults[$this->countItems]['item_name'] = $this->checkAndCleanString($val['item_name']);
-                    $this->filteredResults[$this->countItems]['short_description'] = $this->checkAndCleanString($val['item_short_description']);
+                    $this->filteredResults[$this->countItems]['item_name'] = $this->validateAndSanitize($val['item_name']);
+                    $this->filteredResults[$this->countItems]['short_description'] = $this->validateAndSanitize($val['item_short_description']);
                     $this->filteredResults[$this->countItems]['date'] = $val['date_listed'];
                     $this->filteredResults[$this->countItems]['auction_id'] = $val['auction_id'];
-                    $this->filteredResults[$this->countItems]['image_name'] = $this->checkAndCleanString($val['image_name']);
+                    $this->filteredResults[$this->countItems]['image_name'] = $this->validateAndSanitize($val['image_name']);
                     //image url is not an actual url so clean it as if it was a normal string
-                    $this->filteredResults[$this->countItems]['image_url'] = $this->checkAndCleanString($val['image_url']);
+                    $this->filteredResults[$this->countItems]['image_url'] = $this->validateAndSanitize($val['image_url']);
                     $this->filteredResults[$this->countItems]['price'] = $val['starting_price'];
                     //increase the index
                     $this->countItems++;
@@ -171,9 +174,9 @@ class SearchDB extends DBConnection{
         }else{
             //NOTE might actually split querys and get images seperatly but the most images that will return is 4 so it may be unnecessary 
             //this should only have one valid result
-           $this->filteredResults[0]['full_description'] = $this->checkAndCleanString($val['item_description']);
+           $this->filteredResults[0]['full_description'] = $this->validateAndSanitize($val['item_description']);
            $this->filteredResults[0]['seller_id'] = $val['user_id'];
-           $this->filteredResults[0]['seller_name'] = $this->checkAndCleanString($val['username']);
+           $this->filteredResults[0]['seller_name'] = $this->validateAndSanitize($val['username']);
            $this->filteredResults[0]['rating'] = $val['rating']; 
            //there could be multiple images related to the one item
            foreach($results as $key=>$val){
@@ -181,8 +184,8 @@ class SearchDB extends DBConnection{
                     Array_Push($image_ids, $val['image_id']);
                     //get all images 
                     $this->filteredResults[$this->countItems]['image_id'] = $val['item_images_id'];
-                    $this->filteredResults[$this->countItems]['image_name'] = $this->checkAndCleanString($val['image_name']);
-                    $this->filteredResults[$this->countItems]['image_url'] = $this->checkAndCleanString($val['image_url']);
+                    $this->filteredResults[$this->countItems]['image_name'] = $this->validateAndSanitize($val['image_name']);
+                    $this->filteredResults[$this->countItems]['image_url'] = $this->validateAndSanitize($val['image_url']);
                     $this->countItems++;
             }
            }
@@ -190,7 +193,7 @@ class SearchDB extends DBConnection{
     }
     
     //this function checks if null or empty and if not then proceeds to clean variables of potentially dangerious chars
-    private function checkAndCleanString($var){
+    protected function validateAndSanitize($var = null){
 
         if($var === null || $var === ""){
             //TODO redirect to registration page and inform the user to fill in missing data

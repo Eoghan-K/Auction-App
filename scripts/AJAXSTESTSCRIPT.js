@@ -32,15 +32,16 @@ function loadNewInfo(query){
                 'grid' : isGrid
             },
         success: function(data){
-           /*try {
-                //var output = JSON.parse(data);
-                //will remove as I do not need to parse the data but is good for testing
-                alert("valid" + JSON.parse(data));
+           try {
+                //parsing the data is not really important as the data as the encoded data is fine to use
+                //parsing the data is just a a way to check it is a valid json
+                JSON.parse(data);
+                encodedData = data;
+                changeLayout();
             } catch (e) {
-                alert("Output is not valid JSON: " + data);
-            }*/
-            encodedData = data;
-            changeLayout();
+                $reference.html("<h2>" + data + "</h2>");
+            }
+            
             
         },
         error:function(xhrm, statusText){
