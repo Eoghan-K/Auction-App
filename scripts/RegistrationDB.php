@@ -25,6 +25,7 @@ class Registration extends DBConnection{
         $this->sql = "INSERT INTO users (first_name, second_name, username, user_password, email_address, home_address, post_code, phone_number)
                     VALUES (:firstname, :secondname, :username, :passwordVal, :email, :homeAddress, :postCode, :phoneNumber)";
                     
+
         
     }
 
