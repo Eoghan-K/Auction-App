@@ -22,6 +22,7 @@ class SearchDB extends DBConnection{
         //if works dont forget to sanitize string
         $data = $_POST['query'];
         $this->isGrid = $_POST['grid'];
+        
         if(isset($data) && $data !== null){
             $this->countItems = 0;
             //originalData is the data unaltered
@@ -108,8 +109,6 @@ class SearchDB extends DBConnection{
             }
             
             echo json_encode($this->filteredResults);
-            //below is a test to see if I can get to work with AJAX
-            //$this->pageConstructer = new ConstructPage(json_encode($this->filteredResults), $this->isGrid);
         }else{
             /*
                 TODO check this before sending user to this script

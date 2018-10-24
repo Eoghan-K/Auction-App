@@ -30,6 +30,7 @@ class Registration extends DBConnection{
         //TODO test this without the ini file parsed in here
         $this->config = parse_ini_file('../Config.ini');
         $this->beginTransaction($this->sql, $values);
+
     }
 
     protected function validateAndSanitize(){
