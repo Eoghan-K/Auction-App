@@ -24,7 +24,7 @@ class Registration extends DBConnection{
         //alias being used because password seems to be a sql keyword
         $this->sql = "INSERT INTO users (first_name, second_name, username, user_password, email_address, home_address, post_code, phone_number)
                     VALUES (:firstname, :secondname, :username, :passwordVal, :email, :homeAddress, :postCode, :phoneNumber)";
-        $this->config = parse_ini_file('../Config.ini');
+                    
         
     }
 
