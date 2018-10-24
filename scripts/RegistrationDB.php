@@ -24,8 +24,12 @@ class Registration extends DBConnection{
         //alias being used because password seems to be a sql keyword
         $this->sql = "INSERT INTO users (first_name, second_name, username, user_password, email_address, home_address, post_code, phone_number)
                     VALUES (:firstname, :secondname, :username, :passwordVal, :email, :homeAddress, :postCode, :phoneNumber)";
+        $values = array('firstname'=>$this->firstName, 'secondname'=>$this->secondName, 'username'=>$this->username, 'passwordVal'=>$this->passwordVal, 
+        'email'=>$this->emailAddress, 'homeAddress'=>$this->homeAddress, 'postCode'=>$this->postCode, 'phoneNumber'=>$this->phoneNumber);
+        //NOTE dont actually think I need this as the ini file is parsed in the dbconnection file
+        //TODO test this without the ini file parsed in here
         $this->config = parse_ini_file('../Config.ini');
-        
+        $this->beginTransaction($this->sql, $values);
     }
 
     protected function validateAndSanitize(){
@@ -70,7 +74,8 @@ class Registration extends DBConnection{
         return $var;
     }
 
-    public function beginTransaction(){
+    //NOTE not in use anymore
+    /*public function beginTransaction(){
         //this function pushes data to the database
         //setup connection
         $this->connectionSetup();
@@ -86,7 +91,7 @@ class Registration extends DBConnection{
             echo("The query failed: " . $e->getMessage());
         }
         
-    }
+    }*/
 
 
 
@@ -96,5 +101,5 @@ class Registration extends DBConnection{
 //create new registration
 $userDetails = new Registration();
 //begin the transaction
-$userDetails->beginTransaction();
+//$userDetails->beginTransaction();
 ?>

@@ -45,7 +45,8 @@ class SearchDB extends DBConnection{
             //below is a test to see if I can get this to work with AJAX
             $this->commenceSearch();
         }else{
-            echo "searches must be more than 2 letters long";
+            //should never get this far if error checking is done on page to ensure nothing is executed if nothing is entered
+            echo "<h2>searches must be more than 2 letters long</h2>";
         }
     }
     
@@ -115,7 +116,7 @@ class SearchDB extends DBConnection{
                 if user somehow ends up on this script
                 redirect back to original page and display error
             */
-            echo "searches must be more than 2 letters long";
+            echo "<h2>searches must be more than 2 letters long</h2>";
         }
     }
     
@@ -124,18 +125,23 @@ class SearchDB extends DBConnection{
         
         switch($type){
             case 'string':
-                $query = $this->PDOConnection->prepare($this->sqlSearchString);
+                //$query = $this->PDOConnection->prepare($this->sqlSearchString);
+                $sql = $this->sqlSearchString;
                 break;
             case 'sound':
-                $query = $this->PDOConnection->prepare($this->sqlSearchSound);
+                //$query = $this->PDOConnection->prepare($this->sqlSearchSound);
+                $sql = $this->sqlSearchSound;
                 break;
             case 'missingDetails':
-                $query = $this->PDOConnection->prepare($this->sqlAllDetails);
+                //$query = $this->PDOConnection->prepare($this->sqlAllDetails);
+                $sql = $this->sqlAllDetails;
                 break;
         }
         
-        $query->execute(array('input'=>$value));
-        $results = $query->fetchALL(PDO::FETCH_ASSOC);
+        //$query->execute(array('input'=>$value));
+        $arr = array('input'=>$value);
+        //$results = $query->fetchALL(PDO::FETCH_ASSOC);
+        $results = $this->beginTransaction($sql,$arr);
         //echo $results->rowCount();
         $this->inspectAndCompileResults($results,$type);
     }
@@ -156,7 +162,6 @@ class SearchDB extends DBConnection{
                     //inserting array inside of array of givin index
                     $this->filteredResults[$this->countItems] = array();
                     
-
                     //clean all variables to ensure nothing malicious made it into the database and store all items in array with a key
                     $this->filteredResults[$this->countItems]['item_id'] = $val['item_id'];
                     $this->filteredResults[$this->countItems]['item_name'] = $this->validateAndSanitize($val['item_name']);
