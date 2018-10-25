@@ -28,18 +28,22 @@
             return $this->PDOConnection;
         }
         
-        public function beginTransaction($query, $keyValPairArr){
+        public function beginQuery($query, $keyValPairArr){
             //this function will be used to send querys to the database all the developer will have to do is
             //supply the function with a valid query and a valid key value pair array
             try{
                 $this->connectionSetup();
-                $this->PDOConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                //$this->PDOConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $this->PDOConnection->prepare($query);
                 $this->PDOConnection->execute($keyValuePairArr);
                 return $this->PDOConnection->fetchALL(PDO::FETCH_ASSOC);
             }catch(Exception $e){
                 die("Something has gone wrong when trying to query the database: " . $e->getMessage());
             }
+        }
+
+        public function conductTransaction($query, $keyValPairArr){
+
         }
         
     }

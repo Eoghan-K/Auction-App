@@ -140,7 +140,7 @@ class SearchDB extends DBConnection{
         //$query->execute(array('input'=>$value));
         $arr = array('input'=>$value);
         //$results = $query->fetchALL(PDO::FETCH_ASSOC);
-        $results = $this->beginTransaction($sql,$arr);
+        $results = $this->beginQuery($sql,$arr);
         //echo $results->rowCount();
         $this->inspectAndCompileResults($results,$type);
     }

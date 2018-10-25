@@ -29,7 +29,7 @@ class Registration extends DBConnection{
         //NOTE dont actually think I need this as the ini file is parsed in the dbconnection file
         //TODO test this without the ini file parsed in here
         $this->config = parse_ini_file('../Config.ini');
-        $this->beginTransaction($this->sql, $values);
+        $this->beginQuery($this->sql, $values);
 
     }
 
