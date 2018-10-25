@@ -20,7 +20,9 @@
             </form>
         </div>
         <div class="col-6">
-            <h2>this is where the image upload option will be</h2>
+            <div class="row">
+                <h2>this is where the image upload option will be</h2>
+            </div>
         </div>
     </div>
     

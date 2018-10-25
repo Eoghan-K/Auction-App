@@ -7,6 +7,8 @@ class ItemUpload extends DBConnection{
     private $nameSound, $keywordSound;
     private $sqlSaleDetails, $sqlSaleSound, $sqlAuction;
     
+    //NOTE should get this from session when session script is complete
+    private $sellerID;
     
     public function __construct(){
         $this->getAndSanitizeVars();
@@ -23,15 +25,18 @@ class ItemUpload extends DBConnection{
         $this->fullDescription = validateAndSanitize($_POST['full_description']);
         $this->keywords = validateAndSanitize($_POST['keywords']);
         $this->condition = validateAndSanitize($_POST['condition']);
+        //TODO get seller id from session
 
     }
 
     private function setupSQLStrings(){
-        //NOTE none of these statements are complete
-        
-        $sqlSaleDetails = "INSERT INTO items (item_name) VALUES (:itemName)";
-        $sqlSaleSound = "INSERT INTO sounds (item_sound, keyword_sound) VALUES (:itemSound, :keywordSound)";
-        
+        //create function to insert the actual item
+        $sqlSaleDetails = "INSERT INTO item (item_name, item_keywords, item_short_description, item_description, starting_price, delivery_cost, seller_id) 
+                    VALUES (:itemName, :itemKeywords, :itemShortDescription, :itemFullDescription, :startingPrice, :deliveryCost, :sellerID)";
+        //create query to insert sounds related to the actual item
+        $sqlSaleSound = "INSERT INTO item_sounds (item_name_sounds, keyword_sounds, item_id) VALUES (:itemSound, :keywordSound, :itemID)";
+        //create query to insert auction details if the actual item is an auction
+        $sqlAuction = "INSERT INTO auctions (item_id, current_offer) VALUES (:itemID, :startingPrice)";
     }
 
     private function startTransaction(){
@@ -44,14 +49,17 @@ class ItemUpload extends DBConnection{
             $PDOConnection->beginTransaction();
             //prepare and execute the statement for the item details
             $PDOConnection->prepare($this->sqlSaleDetails);
-            $PDOConnection->execute(array('item_name'=>$this->itemName));
+            $PDOConnection->execute(array('itemName'=>$this->itemName, 'itemKeywords'=>$this->keywords, 'itemShortDescription'=>$this->shortDescription, 
+            'itemFullDescription'=>$this->fullDescription, 'startingPrice'=>$this->itemPrice, 'deliveryCost'=>$this->deliveryCost, 'sellerID'=>$this->sellerID));
+            //get the ID of the table we are trying to commit
+            $itemID = $PDOConnection->lastInsertId();
             //prepare and execute the statment for the item sound
             $PDOConnection->prepare($this->sqlSaleSound);
-            $PDOConnection-execute(array(':itemSound'=>$this->nameSound,":keywordSound"=>$this->keywordSound));
+            $PDOConnection-execute(array('itemSound'=>$this->nameSound, 'keywordSound'=>$this->keywordSound, 'itemID'=>$itemID));
             //if the sale is an auction then prepare and execute the statement for an auction
             if($this->isAuction){
                 $PDOConnection->prepare($this->sqlAuction);
-                $PDOConnection->execute(array(/*need to setup statement first*/));
+                $PDOConnection->execute(array('itemID'=>$itemID, 'startingPrice'=>$this->itemPrice));
             }
 
             $PDOConnection->commit();
