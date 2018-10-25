@@ -28,6 +28,8 @@
             return $this->PDOConnection;
         }
         
+        //CANNOT GET THIS TO WORK
+        //Will fix later
         public function beginQuery($query, $keyValPairArr){
             //this function will be used to send querys to the database all the developer will have to do is
             //supply the function with a valid query and a valid key value pair array

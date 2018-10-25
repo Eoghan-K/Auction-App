@@ -7,7 +7,7 @@
 <div id="form-wrapper" class="container">
     <div class="col-6">
         <div class="row">
-            <form method="post" action="">
+            <form method="POST" action="scripts/uploadItemInfo.php">
 	            <input name="item_name" placeholder="Title" />
                 <input name="item_price" placeholder="Price" />
                 <input name="delivery_price" placeholder="Price of Delivery" />

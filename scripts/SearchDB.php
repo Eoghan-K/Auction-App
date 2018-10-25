@@ -9,7 +9,7 @@ class SearchDB extends DBConnection{
 
     private $originalData, $data, $dataDecon, $dataSound;
     private $filteredResults, $allResultsIDs, $countItems;
-    private $PDOConnection;
+    //private $PDOConnection;
     private $sqlSearchSound, $sqlSearchString, $sqlAllDetails, $sqlAllImages;
     private $isGrid;
     //due to the way I have set up my files errors will not display on page but will instead break the entire script
@@ -124,23 +124,23 @@ class SearchDB extends DBConnection{
         
         switch($type){
             case 'string':
-                //$query = $this->PDOConnection->prepare($this->sqlSearchString);
-                $sql = $this->sqlSearchString;
+                $query = $this->PDOConnection->prepare($this->sqlSearchString);
+                //$sql = $this->sqlSearchString;
                 break;
             case 'sound':
-                //$query = $this->PDOConnection->prepare($this->sqlSearchSound);
-                $sql = $this->sqlSearchSound;
+                $query = $this->PDOConnection->prepare($this->sqlSearchSound);
+                //$sql = $this->sqlSearchSound;
                 break;
             case 'missingDetails':
-                //$query = $this->PDOConnection->prepare($this->sqlAllDetails);
-                $sql = $this->sqlAllDetails;
+                $query = $this->PDOConnection->prepare($this->sqlAllDetails);
+                //$sql = $this->sqlAllDetails;
                 break;
         }
         
-        //$query->execute(array('input'=>$value));
-        $arr = array('input'=>$value);
-        //$results = $query->fetchALL(PDO::FETCH_ASSOC);
-        $results = $this->beginQuery($sql,$arr);
+        $query->execute(array('input'=>$value));
+        //$arrVal = array('input'=>$value);
+        $results = $query->fetchALL(PDO::FETCH_ASSOC);
+        //$results = $this->beginQuery($sql,array('input'=>$value));
         //echo $results->rowCount();
         $this->inspectAndCompileResults($results,$type);
     }
