@@ -12,80 +12,71 @@
         abstract protected function validateAndSanitize();
 
         //NOTE these functions should be converted to private after begingTransaction has been implemented into search and registration scripts
-        public function connectionSetup(){
+        private function connectionSetup(){
             $this->config =parse_ini_file('../Config.ini');
 
             try{
-            $this->PDOConnection = new PDO("mysql:host=".$this->config['dburl']."; dbname=".$this->config['dbname'],$this->config['username'], $this->config['password']);
+                $this->PDOConnection = new PDO("mysql:host=".$this->config['dburl']."; dbname=".$this->config['dbname'],$this->config['username'], $this->config['password'],
+                array(PDO::ATTR_PERSISTENT => true ));
                 $this->PDOConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             }catch(PDOException $e){
-                echo $e->getMessage();
-                die("ded");
+                echo "Connection status: " . $e->getCode() . " Connection error message: " . $e->getMessage();
+                die("The Connection to the database failed");
             }
         }
 
         public function getConnection(){
+            if(!isset($this->PDOConnection)){
+                $this->connectionSetup();
+            }
+
             return $this->PDOConnection;
         }
+
+        //might make another class to be used as a helper class to handle things like 
+        //getting strings from config and maybe write errors to an error log
+        //as code like this does not belong here
+        public function getVarFromConfig($var){
+            //I am using a method for this rather than 
+            //directly parsing the config in needed classes as I can restrict access and
+            //I figure if a php scripts prints its self to the screen at least the location of the config will be kept secret 
+            if(isset($var) && $var !== null && $var !== ""){
+                switch($var){
+                    case "SoSalty":
+                    return $this->config['salt'];
+                    break;
+                }
+            }
+        }
         
-        //CANNOT GET THIS TO WORK
-        //Will fix later
+        //is used to send querys to the database all the developer has to do is
+        //supply the function with a valid query and a valid key value pair array
         public function beginQuery($query, $keyValPairArr){
-            //this function will be used to send querys to the database all the developer will have to do is
-            //supply the function with a valid query and a valid key value pair array
-            try{
-                $this->connectionSetup();
-                //$this->PDOConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $this->PDOConnection->prepare($query);
-                $this->PDOConnection->execute($keyValuePairArr);
-                return $this->PDOConnection->fetchALL(PDO::FETCH_ASSOC);
-            }catch(Exception $e){
-                die("Something has gone wrong when trying to query the database: " . $e->getMessage());
+            //check the values are valid
+            if(isset($query) && isset($keyValPairArr) && $query !== null && $query !== "" && $keyValPairArr !== null){
+                //setup the connection the the database
+                $this->getConnection();
+                //try connect query the database if fails catch the error and print to screen 
+                try{
+                    //prepare the statement sent to the funcion
+                    $query = $this->PDOConnection->prepare($query);
+                    //execute the query with the array of values sent to the function
+                    $query->execute($keyValPairArr);
+                    //get all the results and return
+                    return $query->fetchALL(PDO::FETCH_ASSOC);
+                }catch(Exception $e){
+                    //NOTE these errors will eventually have to be moved to an error log
+                    die("Something has gone wrong when trying to query the database: " . $e->getMessage());
+                }
+            }else{
+                die("not all parameters were set please ensure your script is setup correctly");
             }
         }
 
         public function conductTransaction($query, $keyValPairArr){
-
+            //this will be used for complex sql transactions 
+            //that simple querys cannot solve
         }
         
     }
-    
-    /*
-    
-    how to connect to the database and send querys
-    in your own script via this script using PDO
-    step 1: include this script in top of file
-    
-    include("DBConnection.php");
-    
-    step 2: inherit this scripts class
-    
-    class ClassName extends DBConnection
-    
-    step 3: call connectionSetup() function and save in variable 
-    via the getConnection() function
-    
-    $this->connectionSetup();
-    $conectionVar = $this->getConnection();
-    
-    step 4: next prepare your sql statement
-    
-    $connectionVar->prepare("SELECT * FROM items WHERE itemName = :nameKeyword AND item_price > :priceKeyword");
-    
-    the :nameKeyword and the priceKeyword are your personal keywords like variable names
-    you will see why soon but they are essentially equal to the ? symbol in a mysqli prepared statement
-    the only difference is you name them yourself
-    
-    step 5: now you can execute your query and input the users data
-    
-    $connectionVar->execute(array('nameKeyword'=>$userInput, 'priceKeyword'=$userInput);
-    
-    step 6: get your results
-    
-    $resultsArr = $connectionVar->fetchALL(PDO::FETCH_ASSOC);
-    
-    after all this you can use your data in what ever mannor you want
-    
-    
-    */
 ?>

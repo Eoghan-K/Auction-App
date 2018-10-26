@@ -9,12 +9,8 @@ class SearchDB extends DBConnection{
 
     private $originalData, $data, $dataDecon, $dataSound;
     private $filteredResults, $allResultsIDs, $countItems;
-    //private $PDOConnection;
     private $sqlSearchSound, $sqlSearchString, $sqlAllDetails, $sqlAllImages;
     private $isGrid;
-    //due to the way I have set up my files errors will not display on page but will instead break the entire script
-    //so to remedy this all errors will be sent in the results array and printed out that way, unless it is required to kill the scri
-    private $error;
 
     public function __construct(){
         
@@ -37,10 +33,6 @@ class SearchDB extends DBConnection{
             //setup arrays to store results
             $this->allResultsIDs = array();
             $this->filteredResults = array();
-            //create and get the connection to database
-            $this->connectionSetup();
-            $this->PDOConnection = $this->getConnection();
-            $this->PDOConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             //create the statements for future use
             $this->createSqlStatements();
             //below is a test to see if I can get this to work with AJAX
@@ -55,9 +47,9 @@ class SearchDB extends DBConnection{
         //NOTE all sql statements need to be optimized, will do once presentation is over and done with
         //create sql statement for strings with original values
         //select necessary fields from item if the item name or keywords match (in some way (contains wildcards)) to the users input
-        $this->sqlSearchString = "SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.auction_id, img.image_url, img.image_name,
+        $this->sqlSearchString = "SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.auction_id, i.delivery_cost, img.image_url, img.image_name,
         CASE WHEN auction_id > 0 
-        THEN (SELECT a.current_offer FROM auctions AS a WHERE auction_id = a.auction_id) 
+        THEN (SELECT a.current_offer FROM auctions AS a WHERE i.auction_id = a.auction_id) 
         ELSE starting_price END AS starting_price
         FROM item AS i 
         JOIN item_images AS img ON i.item_id=img.item_id AND img.item_image_num=1 
@@ -124,24 +116,18 @@ class SearchDB extends DBConnection{
         
         switch($type){
             case 'string':
-                $query = $this->PDOConnection->prepare($this->sqlSearchString);
-                //$sql = $this->sqlSearchString;
+                $sql = $this->sqlSearchString;
                 break;
             case 'sound':
-                $query = $this->PDOConnection->prepare($this->sqlSearchSound);
-                //$sql = $this->sqlSearchSound;
+                $sql = $this->sqlSearchSound;
                 break;
             case 'missingDetails':
-                $query = $this->PDOConnection->prepare($this->sqlAllDetails);
-                //$sql = $this->sqlAllDetails;
+                $sql = $this->sqlAllDetails;
                 break;
         }
         
-        $query->execute(array('input'=>$value));
-        //$arrVal = array('input'=>$value);
-        $results = $query->fetchALL(PDO::FETCH_ASSOC);
-        //$results = $this->beginQuery($sql,array('input'=>$value));
-        //echo $results->rowCount();
+        $results = $this->beginQuery($sql,array('input'=>$value));
+        
         $this->inspectAndCompileResults($results,$type);
     }
     
@@ -171,6 +157,7 @@ class SearchDB extends DBConnection{
                     //image url is not an actual url so clean it as if it was a normal string
                     $this->filteredResults[$this->countItems]['image_url'] = $this->validateAndSanitize($val['image_url']);
                     $this->filteredResults[$this->countItems]['price'] = $val['starting_price'];
+                    $this->filteredResults[$this->countItems]['deliveryCount'] = $val['delivery_cost'];
                     //increase the index
                     $this->countItems++;
                 }

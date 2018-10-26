@@ -24,23 +24,6 @@ class ConstructPage{
         $this->constructLayout();
     }
     
-    public  function updateData($encodedValues){
-        //decode array
-        $this->itemArray = json_decode($encodedValues, true);
-        //update page with new values
-        $this->constructLayout();
-    }
-    
-    public function updateLayout($isGrid){
-        //if the grid value passed in is set and the new value is not equal to the old value then update the page
-        //else do nothing
-        if(isset($isGrid) && $isGrid !== $this->isGrid){
-            $this->isGrid = $isGrid;
-            $this->constructLayout();
-        }
-       
-    }
-    
     public function constructLayout(){
         //for some reason php seems to get confused about what datatype my bool is so leaving both bool and string comparisons 
         if($this->isGrid === true || $this->isGrid === "true"){
@@ -117,7 +100,7 @@ class ConstructPage{
         $currentItem = 0;
         
         
-        //loop for rows
+        //loop for rows 
         for($i = 0; $i < $numItems; $i++){ ?>
             <a class='row card_row' href="#"><?php
                 //TODO add image name and short description to db
