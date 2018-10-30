@@ -9,7 +9,6 @@ class SearchDB extends DBConnection{
 
     private $originalData, $data, $dataDecon, $dataSound;
     private $filteredResults, $allResultsIDs, $countItems;
-    private $PDOConnection;
     private $sqlSearchSound, $sqlSearchString, $sqlAllDetails, $sqlAllImages;
     private $isGrid;
 
@@ -34,25 +33,23 @@ class SearchDB extends DBConnection{
             //setup arrays to store results
             $this->allResultsIDs = array();
             $this->filteredResults = array();
-            //create and get the connection to database
-            $this->connectionSetup();
-            $this->PDOConnection = $this->getConnection();
-            $this->PDOConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             //create the statements for future use
             $this->createSqlStatements();
             //below is a test to see if I can get this to work with AJAX
             $this->commenceSearch();
         }else{
-            echo "searches must be more than 2 letters long";
+            //should never get this far if error checking is done on page to ensure nothing is executed if nothing is entered
+            echo "<h2>searches must be more than 2 letters long</h2>";
         }
     }
     
     private function createSqlStatements(){
+        //NOTE all sql statements need to be optimized, will do once presentation is over and done with
         //create sql statement for strings with original values
         //select necessary fields from item if the item name or keywords match (in some way (contains wildcards)) to the users input
-        $this->sqlSearchString = "SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.auction_id, img.image_url, img.image_name,
+        $this->sqlSearchString = "SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.auction_id, i.delivery_cost, img.image_url, img.image_name,
         CASE WHEN auction_id > 0 
-        THEN (SELECT a.current_offer FROM auctions AS a WHERE auction_id = a.auction_id) 
+        THEN (SELECT a.current_offer FROM auctions AS a WHERE i.auction_id = a.auction_id) 
         ELSE starting_price END AS starting_price
         FROM item AS i 
         JOIN item_images AS img ON i.item_id=img.item_id AND img.item_image_num=1 
@@ -104,15 +101,13 @@ class SearchDB extends DBConnection{
             }
             
             echo json_encode($this->filteredResults);
-            //below is a test to see if I can get to work with AJAX
-            //$this->pageConstructer = new ConstructPage(json_encode($this->filteredResults), $this->isGrid);
         }else{
             /*
                 TODO check this before sending user to this script
                 if user somehow ends up on this script
                 redirect back to original page and display error
             */
-            echo "searches must be more than 2 letters long";
+            echo "<h2>searches must be more than 2 letters long</h2>";
         }
     }
     
@@ -121,19 +116,18 @@ class SearchDB extends DBConnection{
         
         switch($type){
             case 'string':
-                $query = $this->PDOConnection->prepare($this->sqlSearchString);
+                $sql = $this->sqlSearchString;
                 break;
             case 'sound':
-                $query = $this->PDOConnection->prepare($this->sqlSearchSound);
+                $sql = $this->sqlSearchSound;
                 break;
             case 'missingDetails':
-                $query = $this->PDOConnection->prepare($this->sqlAllDetails);
+                $sql = $this->sqlAllDetails;
                 break;
         }
         
-        $query->execute(array('input'=>$value));
-        $results = $query->fetchALL(PDO::FETCH_ASSOC);
-        //echo $results->rowCount();
+        $results = $this->beginQuery($sql,array('input'=>$value));
+        
         $this->inspectAndCompileResults($results,$type);
     }
     
@@ -153,17 +147,17 @@ class SearchDB extends DBConnection{
                     //inserting array inside of array of givin index
                     $this->filteredResults[$this->countItems] = array();
                     
-
                     //clean all variables to ensure nothing malicious made it into the database and store all items in array with a key
                     $this->filteredResults[$this->countItems]['item_id'] = $val['item_id'];
-                    $this->filteredResults[$this->countItems]['item_name'] = $this->checkAndCleanString($val['item_name']);
-                    $this->filteredResults[$this->countItems]['short_description'] = $this->checkAndCleanString($val['item_short_description']);
+                    $this->filteredResults[$this->countItems]['item_name'] = $this->validateAndSanitize($val['item_name']);
+                    $this->filteredResults[$this->countItems]['short_description'] = $this->validateAndSanitize($val['item_short_description']);
                     $this->filteredResults[$this->countItems]['date'] = $val['date_listed'];
                     $this->filteredResults[$this->countItems]['auction_id'] = $val['auction_id'];
-                    $this->filteredResults[$this->countItems]['image_name'] = $this->checkAndCleanString($val['image_name']);
+                    $this->filteredResults[$this->countItems]['image_name'] = $this->validateAndSanitize($val['image_name']);
                     //image url is not an actual url so clean it as if it was a normal string
-                    $this->filteredResults[$this->countItems]['image_url'] = $this->checkAndCleanString($val['image_url']);
+                    $this->filteredResults[$this->countItems]['image_url'] = $this->validateAndSanitize($val['image_url']);
                     $this->filteredResults[$this->countItems]['price'] = $val['starting_price'];
+                    $this->filteredResults[$this->countItems]['deliveryCount'] = $val['delivery_cost'];
                     //increase the index
                     $this->countItems++;
                 }
@@ -171,9 +165,9 @@ class SearchDB extends DBConnection{
         }else{
             //NOTE might actually split querys and get images seperatly but the most images that will return is 4 so it may be unnecessary 
             //this should only have one valid result
-           $this->filteredResults[0]['full_description'] = $this->checkAndCleanString($val['item_description']);
+           $this->filteredResults[0]['full_description'] = $this->validateAndSanitize($val['item_description']);
            $this->filteredResults[0]['seller_id'] = $val['user_id'];
-           $this->filteredResults[0]['seller_name'] = $this->checkAndCleanString($val['username']);
+           $this->filteredResults[0]['seller_name'] = $this->validateAndSanitize($val['username']);
            $this->filteredResults[0]['rating'] = $val['rating']; 
            //there could be multiple images related to the one item
            foreach($results as $key=>$val){
@@ -181,8 +175,8 @@ class SearchDB extends DBConnection{
                     Array_Push($image_ids, $val['image_id']);
                     //get all images 
                     $this->filteredResults[$this->countItems]['image_id'] = $val['item_images_id'];
-                    $this->filteredResults[$this->countItems]['image_name'] = $this->checkAndCleanString($val['image_name']);
-                    $this->filteredResults[$this->countItems]['image_url'] = $this->checkAndCleanString($val['image_url']);
+                    $this->filteredResults[$this->countItems]['image_name'] = $this->validateAndSanitize($val['image_name']);
+                    $this->filteredResults[$this->countItems]['image_url'] = $this->validateAndSanitize($val['image_url']);
                     $this->countItems++;
             }
            }
@@ -190,7 +184,7 @@ class SearchDB extends DBConnection{
     }
     
     //this function checks if null or empty and if not then proceeds to clean variables of potentially dangerious chars
-    private function checkAndCleanString($var){
+    protected function validateAndSanitize($var = null){
 
         if($var === null || $var === ""){
             //TODO redirect to registration page and inform the user to fill in missing data

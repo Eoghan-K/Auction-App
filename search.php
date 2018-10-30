@@ -34,6 +34,7 @@
         
     </div>
       <?php
+      
         /*require('scripts/SearchDB.php');
         require('scripts/ConstructPage.php');
         
