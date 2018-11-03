@@ -1,7 +1,7 @@
 <?php
 include("DBConnection.php");
 
-class ItemUpload extends DBConnection{
+class SellItemDB extends DBConnection{
 
     private $itemName, $itemPrice, $deliveryCost, $shortDescription, 
             $fullDescription, $keywords, $condition, $isAuction;
