@@ -1,0 +1,2 @@
+all images uploaded by users will be stored on the file server and named by their related id (user id or sale id), if multiple include hyphen to seperate id from image number.
+all links to images will be stored in database
