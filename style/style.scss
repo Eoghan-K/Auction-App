@@ -71,6 +71,31 @@
     background:#343a40cc !important;
 }
 
+//everything here is for the item sales form
+#sale-form-wrapper{
+    padding-top:50px;
+    
+    //everything contained within this is to do with the drag and drop file upload
+    #dragDropUpload{
+        padding:10px;
+        border-width:3px;
+        border-style:dashed;
+        border-color:#ccc;
+        border-radius:20px;
+        
+        .row{
+            text-align:center;
+            margin:auto;
+        }
+    }
+}
+
+.RegForm{
+    background: black;
+    display: flex;
+    flex-direction: column;
+}
+
 #headText{
     height: fit-content;
     text-align: center;

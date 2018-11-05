@@ -57,6 +57,23 @@
 .active {
   background: #343a40cc !important; }
 
+#sale-form-wrapper {
+  padding-top: 50px; }
+  #sale-form-wrapper #dragDropUpload {
+    padding: 10px;
+    border-width: 3px;
+    border-style: dashed;
+    border-color: #ccc;
+    border-radius: 20px; }
+    #sale-form-wrapper #dragDropUpload .row {
+      text-align: center;
+      margin: auto; }
+
+.RegForm {
+  background: black;
+  display: flex;
+  flex-direction: column; }
+
 #headText {
   height: fit-content;
   text-align: center;
