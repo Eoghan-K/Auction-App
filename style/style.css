@@ -69,10 +69,12 @@
       text-align: center;
       margin: auto; }
 
-.RegForm {
-  background: black;
+#sellForm {
   display: flex;
-  flex-direction: column; }
+  flex-direction: column;
+  width: 100%; }
+  #sellForm input {
+    margin: 10px; }
 
 #headText {
   height: fit-content;

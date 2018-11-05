@@ -90,10 +90,15 @@
     }
 }
 
-.RegForm{
-    background: black;
+#sellForm{
     display: flex;
     flex-direction: column;
+    width:100%;
+    
+    input{
+        
+        margin:10px;
+    }
 }
 
 #headText{
