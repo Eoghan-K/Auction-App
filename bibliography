@@ -1,0 +1,19 @@
+[icon for image drag drop downloaded from:]
+https://thenounproject.com
+
+Photo by Noura Mbarki from the Noun Project
+
+[some code from the drag drop fature in the selling items form was taken from 
+the link below:]
+https://bootsnipp.com/snippets/featured/bootstrap-drag-and-drop-upload
+
+[effected files]
+-sellItems.php
+-DragDropFileUpload.js
+
+[Icon collection was downloaded from link below:]
+http://useiconic.com/open
+
+[for the drag drop I am using better drag drop it is implemented in a similar manner to
+dragenter and dragleave but is basically an improved version]
+https://github.com/lolmaus/jquery.dragbetter

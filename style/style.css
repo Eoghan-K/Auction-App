@@ -57,6 +57,62 @@
 .active {
   background: #343a40cc !important; }
 
+#sale-form-wrapper {
+  padding-top: 50px; }
+  #sale-form-wrapper #DDrow {
+    min-height: 300px;
+    border-width: 3px;
+    border-style: dashed;
+    border-color: #ccc;
+    border-radius: 20px; }
+  #sale-form-wrapper #dragDropUpload {
+    padding: 10px;
+    align-self: center; }
+  #sale-form-wrapper .activeDrag {
+    background: #7d7d7d;
+    border-color: #535353; }
+    #sale-form-wrapper .activeDrag #userPrompt {
+      display: flex !important; }
+      #sale-form-wrapper .activeDrag #userPrompt h1 {
+        color: white; }
+    #sale-form-wrapper .activeDrag .row:not(#userPrompt) {
+      display: none; }
+  #sale-form-wrapper .row {
+    text-align: center;
+    margin: auto; }
+    #sale-form-wrapper .row .imageIcon {
+      padding-top: 10%;
+      background: url("../images/icons/svg/photo.svg");
+      background-repeat: no-repeat;
+      padding-left: 5px;
+      padding-right: 5px;
+      fill: grey; }
+
+#legacyUploadBtn {
+  background-image: linear-gradient(#28a745, #26c94b, #28a745);
+  background-image: -webkit-linear-gradient(#28a745, #26c94b, #28a745);
+  background-image: -moz-linear-gradient(#28a745, #26c94b, #28a745);
+  background-image: -ms-linear-gradient(#28a745, #26c94b, #28a745);
+  background-image: -o-linear-gradient(#28a745, #26c94b, #28a745);
+  box-shadow: 2px 3px 0px 1.3px #22572f;
+  border-radius: 5px;
+  padding: 10px 20px 10px 20px; }
+
+#smForm {
+  display: flex;
+  flex-direction: row;
+  width: 100%; }
+  #smForm input {
+    margin: 10px;
+    flex: 1; }
+
+#lgForm {
+  display: flex;
+  flex-direction: column;
+  width: 100%; }
+  #lgForm input {
+    margin: 10px; }
+
 #headText {
   height: fit-content;
   text-align: center;

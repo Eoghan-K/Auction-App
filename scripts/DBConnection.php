@@ -51,7 +51,7 @@
         
         //is used to send querys to the database all the developer has to do is
         //supply the function with a valid query and a valid key value pair array
-        public function beginQuery($query, $keyValPairArr){
+        public function beginQuery($query, $keyValPairArr, $fetch = true){
             //check the values are valid
             if(isset($query) && isset($keyValPairArr) && $query !== null && $query !== "" && $keyValPairArr !== null){
                 //setup the connection the the database
@@ -63,7 +63,9 @@
                     //execute the query with the array of values sent to the function
                     $query->execute($keyValPairArr);
                     //get all the results and return
-                    return $query->fetchALL(PDO::FETCH_ASSOC);
+                    if($fetch){
+                        return $query->fetchALL(PDO::FETCH_ASSOC);
+                    }
                 }catch(Exception $e){
                     //NOTE these errors will eventually have to be moved to an error log
                     die("Something has gone wrong when trying to query the database: " . $e->getMessage());
