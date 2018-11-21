@@ -1,3 +1,5 @@
+@import 'mixins';
+
 .carousel {
   margin-bottom: 15px;
 }
@@ -75,22 +77,76 @@
 #sale-form-wrapper{
     padding-top:50px;
     
-    //everything contained within this is to do with the drag and drop file upload
-    #dragDropUpload{
-        padding:10px;
+    
+
+    #DDrow{
+        min-height:300px;
         border-width:3px;
         border-style:dashed;
         border-color:#ccc;
         border-radius:20px;
+    }
+    //everything contained within this is to do with the drag and drop file upload
+    #dragDropUpload{
+        padding:10px;
+        align-self: center;
         
-        .row{
-            text-align:center;
-            margin:auto;
+    }
+
+    .activeDrag{
+        background:#7d7d7d;
+        border-color: #535353;
+
+        #userPrompt{
+            display: flex !important;
+            h1{   
+                color:white;
+            }
         }
+
+        .row:not(#userPrompt){
+            display:none;
+        }
+
+        
+        
+    }
+
+    .row{
+        .imageIcon{
+            padding-top:10%;
+            background:url('../images/icons/svg/photo.svg');
+            background-repeat:no-repeat;
+            
+            padding-left: 5px;
+            padding-right: 5px;
+            //fill not working for some reason
+            fill:grey;
+    
+        }
+        text-align:center;
+        margin:auto;
     }
 }
 
-#sellForm{
+#legacyUploadBtn{
+    @include threeToneGradient(#28a745, #26c94b, #28a745);
+    box-shadow: 2px 3px 0px 1.3px #22572f;
+    border-radius: 5px;
+    padding:10px 20px 10px 20px;
+}
+
+#smForm{
+    display:flex;
+    flex-direction: row;
+    width: 100%;
+
+    input{
+        margin:10px;
+        flex:1;
+    }
+}
+#lgForm{
     display: flex;
     flex-direction: column;
     width:100%;
@@ -100,6 +156,9 @@
         margin:10px;
     }
 }
+
+
+
 
 #headText{
     height: fit-content;

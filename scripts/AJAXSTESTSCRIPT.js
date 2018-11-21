@@ -24,7 +24,6 @@ function loadNewInfo(query){
    
     
     $.ajax({
-        async: false,
         type: "POST",
         url: 'scripts/SearchDB.php',
         data: {
@@ -55,10 +54,9 @@ function loadNewInfo(query){
 function changeLayout(){
     
     $.ajax({
-        async: false,
         type: "POST",
         url: 'scripts/ConstructPage.php',
-        dataType: 'html',
+        //dataType: 'html',
         data: {'data':encodedData, 'layout':isGrid},
         success: function(data){
             //get the html back from the page constructer and place it in the page
