@@ -6,17 +6,40 @@ class SellItemDB extends DBConnection{
     private $itemName, $itemPrice, $deliveryCost, $shortDescription, 
             $fullDescription, $keywords, $condition, $isAuction;
     private $nameSound, $keywordSound;
-    private $sqlSaleDetails, $sqlSaleSound, $sqlAuction, $sqlUploadImage;
-    
+    private $sqlSaleDetails, $sqlSaleSound, $sqlAuction, $sqlUpdateImage;
+    private $imageDetails;
+    private $imagesPresent;
+    private $response;
+    private $uploaded;
     //NOTE should get this from session when session script is complete
     private $sellerID;
     
     public function __construct(){
+        $this->uploaded = false;
+        $this->response = 'never set';
+        //check, clean and set variables
         $this->getAndSanitizeVars();
         $this->nameSound = metaphone($this->itemName);
         $this->keywordSound = metaphone($this->keywords);
+        //set sql query strings
         $this->setupSQLStrings();
+        
+    }
+
+    public function processRequest(){
+        
+        if(isset($_POST['imageDetails'])){
+            $this->imagesPresent = true;
+            //this should contain an array of elements
+            $this->imageDetails = json_decode($_POST['imageDetails'], true);
+        }else{
+            $this->imagesPresent = false;
+        }
+         
         $this->startTransaction();
+        $arr['imageUploaded'] = $this->imageDetails[0]['message'];
+        $arr['message'] = $this->response;
+        echo json_encode($arr);
     }
 
     private function getAndSanitizeVars(){
@@ -41,16 +64,16 @@ class SellItemDB extends DBConnection{
         $this->sqlSaleSound = "INSERT INTO item_sounds (item_name_sounds, keyword_sounds, item_id) VALUES (:itemSound, :keywordSound, :itemID)";
         //create query to insert auction details if the actual item is an auction
         $this->sqlAuction = "INSERT INTO auctions (item_id, current_offer) VALUES (:itemID, :startingPrice)";
-        //create query to insert the image details for the images pending to be uploaded
-        $this->sqlUploadImage = "INSERT INTO MyBrain (knowledge) VALUES (:AbetterSystemThanTheOneInThereAlready)";
+        //this query updates the images related to the sale I did not want a long concurrent query so this is my chosen method
+        $this->sqlUpdateImage = "UPDATE item_images SET item_id = :saleId ,image_url = :imageUrl WHERE item_images_id = :id";
     }
 
     private function startTransaction(){
         $PDOConnection;
         $query;
         try{
-            //start and get connection
-            $this->connectionSetup();
+            //even though the connection maybe set we should still get a fresh version of the 
+            //connection to ensure the variable has not been altered
             $PDOConnection = $this->getConnection();
             //begin the transaction
             $PDOConnection->beginTransaction();
@@ -63,6 +86,21 @@ class SellItemDB extends DBConnection{
             //prepare and execute the statment for the item sound
             $query = $PDOConnection->prepare($this->sqlSaleSound);
             $query->execute(array('itemSound'=>$this->nameSound, 'keywordSound'=>$this->keywordSound, 'itemID'=>$itemID));
+            
+            //if images have been uploaded update the database to reflect this
+            if($this->imagesPresent){
+                $count = sizeof($this->imageDetails);
+                
+                for($i = 0; $i < $count; $i++){
+                    //(saleID,image_url) VALUES(:saleId, :imageUrl) WHERE item_images_id = :id";
+                    $imageName = $this->imageDetails[$i]['imageName'];
+                    $imageId = $this->imageDetails[$i]['id'];
+                    $query = $PDOConnection->prepare($this->sqlUpdateImage);
+                    $query->execute(array('saleId'=>$itemID, 'imageUrl'=>$imageName, 'id'=>$imageId));
+                }
+                $this->uploaded = true;
+            }
+
             //if the sale is an auction then prepare and execute the statement for an auction
             if($this->isAuction){
                 $query = $PDOConnection->prepare($this->sqlAuction);
@@ -70,10 +108,12 @@ class SellItemDB extends DBConnection{
             }
 
             $PDOConnection->commit();
+            $this->response = 'success';
             //need a page to redirect to
-        }catch(Exception $e){
+        }catch(PDOException $e){
             $PDOConnection->rollBack();
-            echo "rolled back: " . $e;
+            //after rollback we must remove the images and related rows in the table
+            $this->response = "rolled back: " . $e->getMessage();
             //redirect to another page and display error
         }
         
@@ -95,5 +135,6 @@ class SellItemDB extends DBConnection{
         }
     }
 }
-$upload = new ItemUpload();
+$upload = new SellItemDB();
+$upload->processRequest();
 ?>
