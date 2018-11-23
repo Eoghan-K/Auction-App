@@ -17,7 +17,9 @@ class uploadFiles extends DBConnection{
         $this->respMsg = "something went wrong";
         $this->respId = '0';
         $this->respImgName = "not set";
+        //cant remember why I wanted to store the rollback state
         $this->rolledback = false;
+        
         $this->isSale = $_POST['isSale'];
         if($this->isSale){
             $this->SQLInsertDetails = "INSERT INTO item_images(image_name, item_image_num) VALUES(:originalName, :imageNum)";
@@ -53,8 +55,7 @@ class uploadFiles extends DBConnection{
     }
 
     private function encodeResults(){
-        //$responseArr = array();
-        //$responseArr[0] = array();
+        
         $responseArr['message'] = $this->respMsg; 
         $responseArr['id'] = $this->respId; 
         $responseArr['imageName'] = $this->respImgName;
@@ -78,9 +79,6 @@ class uploadFiles extends DBConnection{
         try{
             //get user id from session (when setup for now we will just use id 2)
             $this->userID = 2;
-            //if(isset($this->PDOConnection)){        
-              //  $this->connectionSetup();
-            //}
             //even though the connection maybe set we should still get a fresh version of the 
             //connection to ensure the variable has not been altered
             $this->PDOConnection = $this->getConnection();
