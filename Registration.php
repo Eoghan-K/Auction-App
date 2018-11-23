@@ -19,82 +19,97 @@ if(isset($_POST['submitted']))
 <head>
       <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
       <title>Login</title>
-      <link rel="STYLESHEET" type="text/css" href="style/style.css" />
+      <link rel="STYLESHEET" type="text/css" href="style/fg_membersite.css" />
       <script type='text/javascript' src='scripts/gen_validatorv31.js'></script>
 </head>
-
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-        <div class="card card-signin my-5">
-          <div class="card-body">
-            <h5 class="card-title text-center">Sign Up</h5>
-            <form class="form-signin">
-              <div class="form-label-group">
-                <input type="email" id="inputEmail" class="form-control" placeholder="Email Address" required autofocus>
-                <label for="inputEmail" onclick="document.getElementById('inputEmail').focus();">Email</label>
-              </div>
-              
-              <div class="form-label-group">
-                <input type="Username" id="Username" class="form-control" placeholder="Username" required autofocus
-                >
-                <label for="inputUsername" onclick="document.getElementById('inputUsername').focus();">Username</label>
-              </div>
-              
-              <div class="form-label-group">
-                <input type="name" id="inputName1" class="form-control" placeholder="First Name" required autofocus>
-                <label for="inputName1" onclick="document.getElementById('inputName1').focus();">First Name</label>
-              </div>
-                
-              <div class="form-label-group">
-                <input type="name" id="inputName2" class="form-control" placeholder="Last Name" required autofocus>
-                <label for="inputName2" onclick="document.getElementById('inputName2').focus();">Second Name</label>
-              </div>
-              
-              <div class="form-label-group">
-                <input 
-                <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-                <label for="inputPassword" onclick="document.getElementById('inputPassword').focus();">Password</label>
-              </div>
 
-              <div class="custom-control custom-checkbox mb-3">
-                <input type="checkbox" class="custom-control-input" id="customCheck1">
-                <label class="custom-control-label" for="customCheck1">Remember password</label>
-              </div>
-              <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign Up</button>
-              <hr class="my-4">
-              
-              <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Register with Google</button>
-              <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class="fab fa-facebook-f mr-2"></i> Register in with Facebook</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-  </div>
-</body>
+<div id='fg_membersite'>
+<form id='login' action='<?php echo $fgmembersite->GetSelfScript(); ?>' method='post' accept-charset='UTF-8'>
+<fieldset >
+<legend>Login</legend>
+
+<input type='hidden' name='submitted' id='submitted' value='1'/>
+
+<div class='short_explanation'>* required fields</div>
+
+<div><span class='error'><?php echo $fgmembersite->GetErrorMessage(); ?></span></div>
+<div class='container'>
+    <label for='username' >UserName*:</label><br/>
+    <input type='text' name='username' id='username' value='<?php echo $fgmembersite->SafeDisplay('username') ?>' maxlength="50" /><br/>
+    <span id='login_username_errorloc' class='error'></span>
+</div>
+<div class='container'>
+    <label for='password' >Password*:</label><br/>
+    <input type='password' name='password' id='password' maxlength="50" /><br/>
+    <span id='login_password_errorloc' class='error'></span>
+</div>
+
+<div class='container'>
+    <input type='submit' name='Submit' value='Submit' />
+</div>
+<div class='short_explanation'><a href='reset-pwd-req.php'>Forgot Password?</a></div>
+</fieldset>
+</form>
 
 
 <script type='text/javascript'>
+// <![CDATA[
 
-    var frmvalidator  = new Validator("Registration");
+    var frmvalidator  = new Validator("login");
     frmvalidator.EnableOnPageErrorDisplay();
     frmvalidator.EnableMsgsTogether();
-    
-    frmvalidator.addValidation("email","req","Please provide your email address");
-    
+
     frmvalidator.addValidation("username","req","Please provide your username");
     
-    frmvalidator.addValidation("name1","req","Please provide your first name");
+    frmvalidator.addValidation("password","req","Please provide the password");
 
-    frmvalidator.addValidation("name2","req","Please provide your second name");
-    
-    frmvalidator.addValidation("password","req","Please provide your password");
-
+// ]]>
 </script>
+</div>
 
+<div class="container-fluid bg-light py-3">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+                <div class="card card-body">
+                    <h3 class="text-center mb-4">Sign-up</h3>
+                    <div class="alert alert-danger">
+                        <a class="close font-weight-light" data-dismiss="alert" href="#">×</a>Password is too short.
+                    </div>
+                    <fieldset>
+                        <div class="form-group has-error">
+                            <input class="form-control input-lg" placeholder="E-mail Address" name="email" type="text">
+                        </div>
+                        <div class="form-group has-success">
+                            <input class="form-control input-lg" placeholder="Password" name="password" value="" type="password">
+                        </div>
+                        <div class="form-group has-success">
+                            <input class="form-control input-lg" placeholder="Confirm Password" name="password" value="" type="password">
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control input-lg">
+                                <option selecterd="">Sequrity Question</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control input-lg" placeholder="Sequrity Answer" name="answer" value="" type="text">
+                        </div>
+                        <div class="checkbox">
+                            <label class="small">
+                                <input name="terms" type="checkbox">I have read and agree to the <a href="#">terms of service</a>
+                            </label>
+                        </div>
+                        <input class="btn btn-lg btn-primary btn-block" value="Sign Me Up" type="submit">
+                    </fieldset>
+                </div>
+        </div>
+    </div>
+
+
+
+
+
+</body>
 </html>
 	
 	
