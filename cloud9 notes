@@ -1,0 +1,15 @@
+NOTES to self related to c9
+PHPmyadmin login
+https://auction-app-halamidi.c9users.io/phpmyadmin
+Username: halamidi
+
+https://databases.000webhost.com/
+db name = Auction_DB
+username= auction_admin
+password=auctionDBPassword
+
+dbforfree
+db name = auction_db1
+username= auction_admin
+password=auctionDBPassword
+port=3306
