@@ -1,9 +1,21 @@
-<?php
+ <?php
+ 
+     include "includes/header.php";
 
-    include "includes/header.php";
+     $name = $_POST['name'];
+     $email = $_POST['email'];
+     $message = $_POST['message'];
+    
+    $from = 'From: topChoiceAuctions'; 
+    $to = 'demo@topChoiceAuctions.com'; 
+    $subject = 'Greetings';
+    
+    $body = "From: $name\n E-Mail: $email\n Message:\n $message";
 
-?>
 
+
+ ?>
+ 
 <div class="container-fluid">
     <div class="row">
         <div class="col-12" id="header">
@@ -32,9 +44,22 @@
                 <p class="row">123 easy street,<br> Dublin 1,<br> Dublin,<br> Ireland</p>
                 
             </div>
+            
+            
+    <?php        
+            if ($_POST['submit']) {
+        if (mail ($to, $subject, $body, $from)) { 
+            echo '<p>Your message has been sent!</p>';
+        } else { 
+            echo '<p>Something went wrong, go back and try again!</p>'; 
+        }
+    }
+    ?>
+    
+    
             <div id="contact_form" class="col-md-6 contact_cont">
                 <h1>Contact us directly</h1>
-                <form id="comment_form" action="contactForm.php" method="POST">
+                <form id="comment_form" action="index.php" method="post">
 				    	<input type="text" name="name" placeholder="name" class="form-control"><br/>
 					    <input type="email" name="email" placeholder="Type your email" class="form-control"><br/>
 					    <input type="Subject" name="Subject" placeholder="Subject" class="form-control"><br/>
@@ -44,10 +69,11 @@
             </div>
            </div>
         </div>
-    </div>
+ </div>
 </div>
-<?php
 
-include "includes/footer.php";
-
-?>
+ <?php
+ 
+ include "includes/footer.php";
+ 
+ ?>
