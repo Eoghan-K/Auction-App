@@ -102,7 +102,7 @@ function uploadImage(image, progressID){
 
     $('#progressB-'+progressID).css('width', '10%');
     //checking if folder if it has no file type and is in multiples of 4096 then it could be a folder
-    if(!image.type && image.size % 4096 == 0){
+    if(!image.type && image.size % 4096 == 0){//!checkFile(image) ){
         
         //this is not a fool proof setup but it should hopefully minimize
         //the amount of requests made with folders
@@ -133,12 +133,11 @@ function uploadImage(image, progressID){
         beforeSend:function(){
             $('#progressB-'+progressID).css('width', '20%');
         },
-        //xhr: function(){
-            /*var XhtmlReq = new window.XMLHttpRequest();
+        xhr: function(){
+            var XhtmlReq = new window.XMLHttpRequest();
             XhtmlReq.upload.addEventListener("progress", function(event){
                 if(event.lengthComputable){
                     var percentage = event.loaded / event.total;
-                    alert(percentage);
                     $('#progressB-'+progressID).css('width', percentage + '%');
                 }
             },false);
@@ -146,13 +145,12 @@ function uploadImage(image, progressID){
             XhtmlReq.addEventListener("progress", function(event){
                 if(event.lengthComputable){
                     var percentage = event.loaded / event.total;
-                    
                     $('#progressB-'+progressID).css('width', percentage + '%');
                 }
             },false);
             return XhtmlReq;
-        },*/
-        /* must test both versions of xhr when on server */
+        },
+        /* must test both versions of xhr when on server
         xhr: function(_this){
             var xhr;
             xhr = jQuery.ajaxSettings.xhr();
@@ -167,6 +165,12 @@ function uploadImage(image, progressID){
                 }
             }, 50);
             return xhr;
+        },*/
+        complete: function(data){
+            //re-enable on server things happen to fast locally to see progress bar
+            //$('#progressB-' + progressID).closest('.progress').hide();
+            $('#progressB-'+progressID).css('width', '100%');
+            //return clearInterval(interval);
         },
         success: function(data){
             try{
