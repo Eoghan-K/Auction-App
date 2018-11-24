@@ -3,18 +3,25 @@ var $reference = $('#test');
 //defaults to true
 var isGrid = true;
 var encodedData;
+var formData;
 
 window.loadInformation = function(data, grid, newInformation){
     if(grid === isGrid && newInformation === false){
         //there is nothing left to do so exit script
         return;
     }
-    
+    formData = new FormData();
+    formData.append('layout',grid);
     isGrid = grid;
+    
     if(newInformation){
         loadNewInfo(data);
+        formData.append('query',data);
+        formData.append('type','search');
     }else{
         changeLayout();
+        formData.append('data',encodedData);
+        formData.append('type', 'searchLayout');
     }
     
     

@@ -15,7 +15,7 @@ if(isset($_POST['submitted']))
       <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
       <title>Login</title>
       <link rel="STYLESHEET" type="text/css" href="style/style.css" />
-      <script type='text/javascript' src='scripts/gen_validatorv31.js'></script>
+      <!--<script type='text/javascript' src='scripts/gen_validatorv31.js'></script>-->
 </head>
 
 <body>
@@ -32,8 +32,7 @@ if(isset($_POST['submitted']))
               </div>
               
               <div class="form-label-group">
-                <input type="Username" id="Username" class="form-control" placeholder="Username" required autofocus
-                >
+                <input type="Username" id="Username" class="form-control" placeholder="Username" required autofocus>
                 <label for="inputUsername" onclick="document.getElementById('inputUsername').focus();">Username</label>
               </div>
               
@@ -46,9 +45,24 @@ if(isset($_POST['submitted']))
                 <input type="name" id="inputName2" class="form-control" placeholder="Last Name" required autofocus>
                 <label for="inputName2" onclick="document.getElementById('inputName2').focus();">Second Name</label>
               </div>
+
+              <div class="form-label-group">
+                <input type="text" id="homeAddress" class="form-control" placeholder="Home Address" required autofocus>
+                <label for="homeAddress" onclick="document.getElementById('homeAddress').focus();">Home Address</label>
+              </div>
+
+              <div class="form-label-group">
+                <input type="text" id="postCode" class="form-control" placeholder="Post Code" required autofocus>
+                <label for="postCode" onclick="document.getElementById('postCode').focus();">Post Code</label>
+              </div>
+
+              <div class="form-label-group">
+                <input type="text" id="phoneNumber" class="form-control" placeholder="Phone Number" required autofocus>
+                <label for="phoneNumber" onclick="document.getElementById('phoneNumber').focus();">Phone Number</label>
+              </div>
               
               <div class="form-label-group">
-                <input 
+                
                 <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
                 <label for="inputPassword" onclick="document.getElementById('inputPassword').focus();">Password</label>
               </div>
@@ -57,7 +71,7 @@ if(isset($_POST['submitted']))
                 <input type="checkbox" class="custom-control-input" id="customCheck1">
                 <label class="custom-control-label" for="customCheck1">Remember password</label>
               </div>
-              <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign Up</button>
+              <button id="submitBtn" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign Up</button>
               <hr class="my-4">
               
               <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Register with Google</button>
@@ -69,10 +83,13 @@ if(isset($_POST['submitted']))
     </div>
     
   </div>
-</body>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" ></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="scripts/JavaScript/AjaxRequests.js"></script>
+    <script src="scripts/JavaScript/RegistrationScript.js"></script>
 
-
-<script type='text/javascript'>
+<!--<script type='text/javascript'>
     var frmvalidator  = new Validator("Registration");
     frmvalidator.EnableOnPageErrorDisplay();
     frmvalidator.EnableMsgsTogether();
@@ -85,8 +102,8 @@ if(isset($_POST['submitted']))
     frmvalidator.addValidation("name2","req","Please provide your second name");
     
     frmvalidator.addValidation("password","req","Please provide your password");
-</script>
-
+</script>-->
+</body>
 </html>
 	
 

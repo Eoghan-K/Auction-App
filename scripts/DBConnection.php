@@ -65,6 +65,8 @@
                     //get all the results and return
                     if($fetch){
                         return $query->fetchALL(PDO::FETCH_ASSOC);
+                    }else{
+                        return true;
                     }
                 }catch(Exception $e){
                     //NOTE these errors will eventually have to be moved to an error log
