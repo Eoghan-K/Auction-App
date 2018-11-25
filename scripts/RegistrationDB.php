@@ -29,7 +29,11 @@ class Registration extends DBConnection{
         //these are the values related to the sql query all stored in an array for transportation
         $values = array('firstname'=>$this->firstName, 'secondname'=>$this->secondName, 'username'=>$this->username, 'passwordVal'=>$this->passwordVal, 
         'email'=>$this->emailAddress, 'homeAddress'=>$this->homeAddress, 'postCode'=>$this->postCode, 'phoneNumber'=>$this->phoneNumber);
-        $this->beginQuery($this->sql, $values);
+        
+        if(!$this->beginQuery($this->sql, $values, false)){
+            $arr['message'] = 'success';
+            return json_encode($arr);
+        }
 
     }
 
@@ -53,7 +57,8 @@ class Registration extends DBConnection{
 
         if($var === null || $var === ""){
             //TODO redirect to registration page and inform the user to fill in missing data
-            die("data was null");
+            
+            exit("data was null");
         }
         $var = stripslashes($var);
         //I want to use this method to clean vars aswell but I cannot get filter_input to work so I might just use it to check if null
@@ -65,16 +70,17 @@ class Registration extends DBConnection{
             }
         }else if($type === "phone number"){
             if(filter_var($var, FILTER_VALIDATE_INT)){
-                $var = filter_var($var, FILTER_SANITIZE_INT);
+                $var = filter_var($var, FILTER_SANITIZE_NUMBER_INT);
                 return $var;
             }
         }else{
             $var = filter_var($var, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
             return $var;
         }
+        
         //if($var === false || $var === ""){
             //TODO redirect to page telling user to enter valid data
-        die("please enter valid data: " + $type);  
+            exit("please enter valid data: " . $type . " " . $var);  
         //}
         
     }

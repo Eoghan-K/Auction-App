@@ -12,13 +12,13 @@ function getAndPostData(){
     condition, imageDetails;
     var fData = new FormData();
     //when controller is functional check all values are not null before posting
-    name = document.getElementById('itemName');
-    itemPrice = document.getElementById('itemPrice');
-    deliveryPrice = document.getElementById('deliveryPrice');
-    shortDesc = document.getElementById('shortDesc');
-    fullDesc = document.getElementById('fullDesc');
-    keywords = document.getElementById('keywords');
-    condition = document.getElementById('condition');
+    name = document.getElementById('itemName').value;
+    itemPrice = document.getElementById('itemPrice').value;
+    deliveryPrice = document.getElementById('deliveryPrice').value;
+    shortDesc = document.getElementById('shortDesc').value;
+    fullDesc = document.getElementById('fullDesc').value;
+    keywords = document.getElementById('keywords').value;
+    condition = document.getElementById('condition').value;
     imageDetails = getImageDetails();
     if(imageDetails[0]['message'] !== undefined){
         
@@ -31,6 +31,8 @@ function getAndPostData(){
     fData.append('full_description',fullDesc);
     fData.append('keywords',keywords);
     fData.append('condition', condition);
-    initalizeRequest(fData);
-    executeRequest();
+    fData.append('type', 'saleSubmission');
+    if(initalizeRequest(fData)){
+        executeRequest(fData);
+    }
 }

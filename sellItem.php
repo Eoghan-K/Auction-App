@@ -34,9 +34,9 @@
    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script type="text/javascript" src="scripts/librarys/jquery.dragbetter/jquery.dragbetter.js"></script>
-    <script src="scripts/DragDropFileUpload.js"></script>
-    <script src="scripts/AjaxRequests.js"></script>
-    <script src="scripts/saleForm.js"></script>
+    <script src="scripts/JavaScript/DragDropFileUpload.js"></script>
+    <script src="scripts/JavaScript/AjaxRequests.js"></script>
+    <script src="scripts/JavaScript/saleForm.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     
 </body>

@@ -1,7 +1,0 @@
-@mixin threeToneGradient($top, $center, $bottom) {
-    background-image: linear-gradient($top, $center, $bottom);
-    background-image: -webkit-linear-gradient($top, $center, $bottom);
-    background-image: -moz-linear-gradient($top, $center, $bottom);
-    background-image: -ms-linear-gradient($top, $center, $bottom);
-    background-image: -o-linear-gradient($top, $center, $bottom);
-}
