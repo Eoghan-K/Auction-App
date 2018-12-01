@@ -6,14 +6,14 @@
     abstract class DBConnection{
         private $config;
         private $PDOConnection;
-        
+        private $configPath = "../Config.ini";
         //force implementation of function through abstraction
         //think of this as an interface with some base functionality already implemented
         abstract protected function validateAndSanitize();
 
         //NOTE these functions should be converted to private after begingTransaction has been implemented into search and registration scripts
         private function connectionSetup(){
-            $this->config =parse_ini_file('../Config.ini');
+            $this->config =parse_ini_file($this->configPath);
 
             try{
                 $this->PDOConnection = new PDO("mysql:host=".$this->config['dburl']."; dbname=".$this->config['dbname'],$this->config['username'], $this->config['password'],
@@ -33,6 +33,11 @@
             return $this->PDOConnection;
         }
 
+        public function updatePath($path){
+            //getting the root directory using phps funcions like __dir__ react differently in localhost and hosted on a server
+            //so this is my cheap function, if I remember to change this when hosted I will
+            $this->configPath = $path;
+        }
         //might make another class to be used as a helper class to handle things like 
         //getting strings from config and maybe write errors to an error log
         //as code like this does not belong here
