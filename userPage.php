@@ -1,5 +1,9 @@
 <?php
     include "includes/header.php";
+    session_start();
+    if (!isset($_SESSION['id'])){
+        header( 'location: ../login.php' );
+    }
 ?>
   
   <body>
