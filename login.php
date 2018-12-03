@@ -16,13 +16,13 @@
 						<div class='form-group has-success'>
 							<label class="label label-default" for='email'>E-mail*:</label>
 							<input class="form-control input-lg" type='email' name='email' id='email' placeholder="E-mail"
-								autofocus>
+								required autofocus>
 						</div>
 						
 						<div class='form-group has-success'>
 							<label for='password'>Password*:</label>
 							<input class="form-control input-lg" type='password' name='password' id='password'
-								autocomplete='currentPassword' placeholder="Password" >
+								autocomplete='currentPassword' placeholder="Password" required >
 						</div>
 						
 						<input class="btn btn-lg btn-primary btn-block" value="Log Me In" id='loginBtn' type="submit">
