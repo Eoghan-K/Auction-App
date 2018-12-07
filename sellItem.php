@@ -20,7 +20,10 @@
         <input name="keywords" id='keywords' placeholder="please enter item keywords seperate with a comma(,)" />
         <input name="condition" id='condition' placeholder="item_condition" />
         <!--need to add select box for is auction-->
-        
+        <div id="checkForm">
+            <p>Is this an auction</p>
+            <input name="isAuction" id="saleType" type="checkbox" />
+        </div>
     </div>
     <div id="DragD" title="sellItem"></div>
     <!--include dragdrop-->

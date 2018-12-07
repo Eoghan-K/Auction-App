@@ -10,7 +10,8 @@ class BidOnItem extends DBConnection{
     public function __construct(){
         $this->itemId = $_POST['itemId'];
         //get from session
-        $this->bidderId = 1;
+        session_start();
+        $this->bidderId = $_SESSION['id'];
         $this->bidAmount = $_POST['bidAmount'];
         
         if(isset($_POST['bidGroup'])){
@@ -31,6 +32,7 @@ class BidOnItem extends DBConnection{
     }
 
     public function addBidToDB(){
+        if(isset($this->bidderId) && $this->bidderId > 0){ 
         $PDOConnection;
         try{
             $PDOConnection = $this->getConnection();
@@ -55,7 +57,11 @@ class BidOnItem extends DBConnection{
             $PDOConnection->rollBack();
 
         }
-        echo $this->reponse;
+        }else{
+            $this->response = "NotLoggedIn";
+        }
+        $resp['message'] = $this->response;
+        echo json_encode($resp);
     }
 
     protected function validateAndSanitize(){

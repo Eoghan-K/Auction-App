@@ -48,6 +48,10 @@ function executeRequest(fData){
                     console.debug('it worked ');
                     return newdata;
                     
+                }else if(newdata["message"] === "NotLoggedIn"){
+                    //really things shouldn't get this far as PHP should deal with the redirection but redirections not implemented yet
+                    console.log("you must be logged in to perform this action");
+                    window.location.href = "/Auction-App/login.php";
                 }else{
                     console.log(fData.get('type'));
                     console.log('something went wrong ');

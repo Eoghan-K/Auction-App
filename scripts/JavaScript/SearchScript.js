@@ -31,7 +31,7 @@ function loadNewInfo(query){
    
     
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: 'scripts/SearchDB.php',
         data: {
                 'query': query,
@@ -61,7 +61,7 @@ function loadNewInfo(query){
 function changeLayout(){
     
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: 'scripts/ConstructPage.php',
         //dataType: 'html',
         data: {'data':encodedData, 'layout':isGrid},

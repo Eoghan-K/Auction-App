@@ -130,8 +130,8 @@ class ConstructPage{
     }
 }
 
-$data = $_POST['data'];
-$layoutT = $_POST['layout'];
+$data = $_GET['data'];
+$layoutT = $_GET['layout'];
 new ConstructPage($data, $layoutT);
 
 ?>

@@ -6,7 +6,7 @@ class SellItemDB extends DBConnection{
     private $itemName, $itemPrice, $deliveryCost, $shortDescription, 
             $fullDescription, $keywords, $condition, $isAuction;
     private $nameSound, $keywordSound;
-    private $sqlSaleDetails, $sqlSaleSound, $sqlAuction, $sqlUpdateImage;
+    private $sqlSaleDetails, $sqlSaleSound, $sqlAuction, $sqlUpdateImage, $sqlUpdatsSale;
     private $imageDetails;
     private $imagesPresent;
     private $response;
@@ -17,29 +17,37 @@ class SellItemDB extends DBConnection{
     public function __construct(){
         $this->uploaded = false;
         $this->response = 'never set';
+        
+        session_start();
+        $this->sellerID = $_SESSION['id'];
+        $this->isAuction = $_POST['isAuction'];
         //check, clean and set variables
         $this->getAndSanitizeVars();
         $this->nameSound = metaphone($this->itemName);
         $this->keywordSound = metaphone($this->keywords);
         //set sql query strings
         $this->setupSQLStrings();
-        
     }
 
     public function processRequest(){
-        
-        if(isset($_POST['imageDetails'])){
-            $this->imagesPresent = true;
-            //this should contain an array of elements
-            $this->imageDetails = json_decode($_POST['imageDetails'], true);
-        }else{
-            $this->imagesPresent = false;
-        }
+        //if user is logged in proceed else return error
+        if(isset($this->sellerID) && $this->sellerID > 0){
+            if(isset($_POST['imageDetails'])){
+                $this->imagesPresent = true;
+                //this should contain an array of elements
+                $this->imageDetails = json_decode($_POST['imageDetails'], true);
+            }else{
+                $this->imagesPresent = false;
+            }
          
-        $this->startTransaction();
-        $arr['imageUploaded'] = $this->imageDetails[0]['message'];
-        $arr['message'] = $this->response;
-        echo json_encode($arr);
+            $this->startTransaction();
+            $arr['imageUploaded'] = $this->imageDetails[0]['message'];
+            $arr['message'] = $this->response;
+            echo json_encode($arr);
+        }else{
+            $arr['message'] = "NotLoggedIn";
+            echo json_encode($arr);
+        }
     }
 
     private function getAndSanitizeVars(){
@@ -51,21 +59,21 @@ class SellItemDB extends DBConnection{
         $this->fullDescription = $this->validateAndSanitize($_POST['full_description']);
         $this->keywords = $this->validateAndSanitize($_POST['keywords']);
         $this->condition = $this->validateAndSanitize($_POST['condition']);
-        //TODO get seller id from session
-        $this->sellerID = 1;
-        $this->isAuction = true;
+       
     }
 
     private function setupSQLStrings(){
         //create function to insert the actual item
-        $this->sqlSaleDetails = "INSERT INTO item (item_name, item_keywords, item_short_description, item_description, starting_price, delivery_cost, seller_id, auction_id) 
-                    VALUES (:itemName, :itemKeywords, :itemShortDescription, :itemFullDescription, :startingPrice, :deliveryCost, :sellerID, (SELECT MAX(auction_id)+1 FROM auctions))";
+        $this->sqlSaleDetails = "INSERT INTO item (item_name, item_keywords, item_short_description, item_description, starting_price, delivery_cost, seller_id) 
+                    VALUES (:itemName, :itemKeywords, :itemShortDescription, :itemFullDescription, :startingPrice, :deliveryCost, :sellerID)";
         //create query to insert sounds related to the actual item
         $this->sqlSaleSound = "INSERT INTO item_sounds (item_name_sounds, keyword_sounds, item_id) VALUES (:itemSound, :keywordSound, :itemID)";
         //create query to insert auction details if the actual item is an auction
         $this->sqlAuction = "INSERT INTO auctions (item_id, current_offer) VALUES (:itemID, :startingPrice)";
         //this query updates the images related to the sale I did not want a long concurrent query so this is my chosen method
         $this->sqlUpdateImage = "UPDATE item_images SET item_id = :saleId ,image_url = :imageUrl WHERE item_images_id = :id";
+        //update sales details with the auction id
+        $this->sqlUpdatsSale = "UPDATE item SET auction_id = :aucId WHERE item_id = :itemId";
     }
 
     private function startTransaction(){
@@ -103,8 +111,14 @@ class SellItemDB extends DBConnection{
 
             //if the sale is an auction then prepare and execute the statement for an auction
             if($this->isAuction){
+                //prepare and execute sqlauction query
                 $query = $PDOConnection->prepare($this->sqlAuction);
                 $query->execute(array('itemID'=>$itemID, 'startingPrice'=>$this->itemPrice));
+                //get last inserted id
+                $aucId = $PDOConnection->lastInsertId();
+                //prepare and execute sqlUpdateSale
+                $query = $PDOConnection->prepare($this->sqlUpdatsSale);
+                $query->execute(array('aucId'=>$aucId, 'itemId'=>$itemID));
             }
 
             $PDOConnection->commit();

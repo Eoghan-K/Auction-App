@@ -3,13 +3,14 @@ $(document).ready(function(){
 
     $('#submitBtn').on('click',function(){
         getAndPostData();
-    }
-    );
+    });
+
 });
 
 function getAndPostData(){
+    
     var name, itemPrice, deliveryPrice, shortDesc, fullDesc, keywords, 
-    condition, imageDetails;
+    condition, imageDetails, isAuction;
     var fData = new FormData();
     //when controller is functional check all values are not null before posting
     name = document.getElementById('itemName').value;
@@ -19,9 +20,10 @@ function getAndPostData(){
     fullDesc = document.getElementById('fullDesc').value;
     keywords = document.getElementById('keywords').value;
     condition = document.getElementById('condition').value;
+    isAuction = document.getElementById('saleType').checked;
+    alert(isAuction);
     imageDetails = getImageDetails();
-    if(imageDetails[0]['message'] !== undefined){
-        
+    if(imageDetails[0] !== undefined){
         fData.append('imageDetails', JSON.stringify(imageDetails));
     }
     fData.append('item_name', name);
@@ -31,6 +33,7 @@ function getAndPostData(){
     fData.append('full_description',fullDesc);
     fData.append('keywords',keywords);
     fData.append('condition', condition);
+    fData.append('isAuction', isAuction);
     fData.append('type', 'saleSubmission');
     if(initalizeRequest(fData)){
         executeRequest(fData);
