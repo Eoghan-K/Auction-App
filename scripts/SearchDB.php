@@ -16,8 +16,8 @@ class SearchDB extends DBConnection{
         
         //the below Request is to test if I can get this to work with AJAX
         //if works dont forget to sanitize string
-        $data = $_POST['query'];
-        $this->isGrid = $_POST['grid'];
+        $data = $_GET['query'];
+        $this->isGrid = $_GET['grid'];
         
         if(isset($data) && $data !== null){
             $this->countItems = 0;

@@ -241,10 +241,28 @@ body {
     display: flex;
     flex-direction: column;
     width:100%;
+
+    #checkForm{
+        flex-direction: row;
+        display: flex;
+        background: #f7f7f7;
+        width: -moz-fit-content;
+        width: fit-content;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-right: 5px;
+        padding-left: 15px;
+        border-radius: 10px;
+        margin: 15px;
+        align-items: center;
+    }
     
     input{
         
         margin:10px;
+    }
+    p{
+        margin:0px;
     }
 }
 
@@ -257,10 +275,10 @@ body {
     color: white;
     margin: 0 auto;
     align-self: center;
-}
 
-#headText .row{
-    text-align:center;
+    .row{
+        text-align:center;
+    }
 }
 
 #header{
