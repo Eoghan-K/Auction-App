@@ -19,14 +19,7 @@
             
             $this->config = parse_ini_file('../Config.ini');
             
-            try{
-                $this->PDOConnection = new PDO("mysql:host=".$this->config['dburl']."; dbname=".$this->config['dbname'],$this->config['username'], $this->config['password'],
-                                               array(PDO::ATTR_PERSISTENT => true ));
-                $this->PDOConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            }catch(PDOException $e){
-                echo "Connection status: " . $e->getCode() . " Connection error message: " . $e->getMessage();
-                die("The Connection to the database failed");
-            }
+            $this->PDOConnection = $this->getConnection();
 
             $user = $this->findUser($this->email);
             echo $user['user_id'];
@@ -51,7 +44,7 @@
             }
         }
         
-        public function findUser($email){
+        private function findUser($email){
             $sql = 'SELECT * FROM users WHERE email_address = :email';
             $stmt = $this->PDOConnection->prepare($sql);
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
@@ -59,14 +52,14 @@
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
         
-        public function authenticate($password, $hashedPassword){
+        private function authenticate($password, $hashedPassword){
             if (password_verify($password, $hashedPassword)) {
                 return true;
             }
             return false;
         }
         
-        public function createSession($id){
+        private function createSession($id){
             session_start();
             $_SESSION['id'] = $id;
             session_write_close();
