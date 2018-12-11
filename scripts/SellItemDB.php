@@ -6,7 +6,8 @@ class SellItemDB extends DBConnection{
     private $itemName, $itemPrice, $deliveryCost, $shortDescription, 
             $fullDescription, $keywords, $condition, $isAuction;
     private $nameSound, $keywordSound;
-    private $sqlSaleDetails, $sqlSaleSound, $sqlAuction, $sqlUpdateImage, $sqlUpdatsSale;
+    private $sqlSaleDetails, $sqlSaleSound, $sqlAuction, $sqlUpdateImage;
+    private $sqlDeleteSale, $sqlDeleteBids, $sqlDeleteAuctions, $sqlDeleteImages, $sqlDeleteSounds;
     private $imageDetails;
     private $imagesPresent;
     private $response;
@@ -74,6 +75,15 @@ class SellItemDB extends DBConnection{
         $this->sqlUpdateImage = "UPDATE item_images SET item_id = :saleId ,image_url = :imageUrl WHERE item_images_id = :id";
         //update sales details with the auction id
         $this->sqlUpdatsSale = "UPDATE item SET auction_id = :aucId WHERE item_id = :itemId";
+        
+        //sql query for deleting a sale and all related items
+        //unfortunatlly sql does not support deleting from multiple tables at once
+        $this->sqlDeleteBids = "DELETE bid FROM Bids bid JOIN auctions On auctions.auction_id = bid.auction_id WHERE auctions.item_id = :itemId";
+        $this->sqlDeleteAuctions = "DELETE auctions FROM auctions WHERE item_id = :itemId";
+        $this->sqlDeleteImages = "DELETE item_images FROM item_images WHERE item_id = :itemId";
+        $this->sqlDeleteSounds = "DELETE item_sounds FROM item_sounds WHERE item_id = :itemId";
+        $this->sqlDeleteSale = "DELETE item FROM item WHERE item_id = :itemId";
+
     }
 
     private function startTransaction(){
@@ -131,6 +141,17 @@ class SellItemDB extends DBConnection{
             //redirect to another page and display error
         }
         
+    }
+
+    private function deleteSale(){
+        $PDOConnection;
+        try{
+            $PDOConnection = $this->getConnection();
+            $PDOConnection->beginTransaction();
+
+        }catch(PDOException $e){
+            $PDOConnection->rollBack();
+        }
     }
 
     protected function validateAndSanitize($var = null, $type = "string"){
