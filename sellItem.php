@@ -1,7 +1,8 @@
 <?php
-
     include "includes/header.php";
-
+    if ( !( $GLOBALS[ 'isLoggedIn' ] ) ) {
+        header( 'location: ./login.php' );
+    }
 ?>
 
 <div id="sale-form-wrapper" class="container" >
@@ -41,6 +42,8 @@
     <script src="scripts/JavaScript/AjaxRequests.js"></script>
     <script src="scripts/JavaScript/saleForm.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    
-</body>
-</html>
+
+<?php
+    include "includes/footer.php";
+
+?>

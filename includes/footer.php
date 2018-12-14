@@ -1,7 +1,7 @@
-<?php
-    /**
-     * Created by PhpStorm.
-     * User: Eoghan
-     * Date: 14/12/2018
-     * Time: 03:25
-     */
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted">&copy; <?php echo date( "Y" ); ?> - topChoice Auctions</span>
+    </div>
+</footer>
+</body>
+</html>

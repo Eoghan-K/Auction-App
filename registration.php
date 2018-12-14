@@ -96,8 +96,10 @@ if(isset($_POST['submitted']))
     
     frmvalidator.addValidation("password","req","Please provide your password");
 </script>-->
-</body>
-</html>
+<?php
+    include "includes/footer.php";
+?>
+
 	
 
 	

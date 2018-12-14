@@ -1,5 +1,4 @@
 <?php
-
     include "includes/header.php";
 
 ?>
@@ -42,7 +41,7 @@
   </div>
 
   <div class="container text-center">
-    <h3>Item descption</h3><br>
+    <h3>Item Description</h3><br>
     <div class="row">
       <div class="col-sm-4">
         <img src="" class="img-responsive" style="width:100%" alt="Image">
@@ -62,14 +61,10 @@
         </div>
       </div>
     </div>
-  </div><br>
+  </div>
 
-  <footer class="container-fluid text-center">
-    <p>Footer Text</p>
-  </footer>
+<?php
 
-  <?php
-
-    include "includes/footer.php";
+    include "includes/bootstrapScripts.php";
     
 ?>

@@ -13,13 +13,13 @@
 					
 					<form id='loginForm' method='post' action='scripts/Login.php'>
 						
-						<div class='form-group has-success'>
-							<label class="label label-default" for='email'>E-mail*:</label>
+						<div class='form-group'>
+							<label for='email'>E-mail*:</label>
 							<input class="form-control input-lg" type='email' name='email' id='email' placeholder="E-mail"
 								required autofocus>
 						</div>
 						
-						<div class='form-group has-success'>
+						<div class='form-group'>
 							<label for='password'>Password*:</label>
 							<input class="form-control input-lg" type='password' name='password' id='password'
 								autocomplete='currentPassword' placeholder="Password" required >
@@ -44,5 +44,5 @@
 	</script>
 
 <?php
-	include "includes/footer.php";
+	include "includes/bootstrapScripts.php";
 ?>
