@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 4.8.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Oct 24, 2018 at 08:29 AM
+-- Generation Time: Dec 14, 2018 at 01:53 AM
 -- Server version: 8.0.13
 -- PHP Version: 7.2.10-0ubuntu0.18.04.1
 
@@ -40,7 +40,8 @@ CREATE TABLE `auctions` (
 --
 
 INSERT INTO `auctions` (`auction_id`, `item_id`, `current_offer`, `bidder_id`) VALUES
-(1, 3, 50, 1);
+(1, 3, 50, 1),
+(2, 6, 20, NULL);
 
 -- --------------------------------------------------------
 
@@ -52,10 +53,11 @@ CREATE TABLE `item` (
   `item_id` int(11) NOT NULL,
   `item_name` varchar(45) NOT NULL,
   `item_keywords` varchar(60) NOT NULL,
-  `item_short_description` varchar(40) DEFAULT NULL,
-  `item_description` longtext NOT NULL,
+  `item_short_description` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `item_description` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `auction_id` int(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'if the item is an of type auction then item will contain the forignkey to the auction',
   `starting_price` double NOT NULL COMMENT 'this will either be the starting price of the item or the fixed price for a standard sale\\n',
+  `delivery_cost` double NOT NULL,
   `date_listed` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `seller_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -64,12 +66,13 @@ CREATE TABLE `item` (
 -- Dumping data for table `item`
 --
 
-INSERT INTO `item` (`item_id`, `item_name`, `item_keywords`, `item_short_description`, `item_description`, `auction_id`, `starting_price`, `seller_id`) VALUES
-(1, 'sony tablet', 'tablet, android, testAll', 'crappy short text', 'Iam just typing some random shit as im not even arsed pasting in lorm ipsum.', 0, 10000000, 1),
-(2, 'sony tablet', 'tablet, android, testAll', 'crappy short description', 'Iam just typing some random shit as im not even arsed pasting in lorm ipsum.', 0, 10000000, 2),
-(3, 'iphone', 'mobile phone, Iphone, smart Phone, touchscreen, testAll', 'crappy short description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sagittis dignissim consectetur. Mauris erat orci, scelerisque in pretium quis, elementum quis nisl. Curabitur at nibh sed felis volutpat luctus. Maecenas cursus venenatis nunc id dignissim. Ut vel ligula et turpis rhoncus gravida. Donec vel felis pellentesque, pellentesque neque vitae, pulvinar sapien. Praesent et purus at ex tincidunt blandit sed eu mauris. Vestibulum vulputate urna lectus, quis ornare tortor vulputate at. In ullamcorper malesuada hendrerit. Quisque lobortis erat non justo tempor volutpat. In hac habitasse platea dictumst. Fusce id viverra dui. Aliquam eu eros viverra, sollicitudin nisl sed, dictum felis. Aenean auctor eu purus a posuere. Nam ullamcorper diam ultricies cursus feugiat. Fusce posuere maximus nulla, sed vulputate velit consectetur ac.', 1, 32, 1),
-(4, 'smart tv', 'tv, android, testAll, smart tv', 'this is a smart tv, like new', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur dignissim sem non metus malesuada interdum. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aenean et velit a neque placerat pretium ut nec mauris. Mauris vitae purus cursus, laoreet lacus at, vehicula arcu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus molestie iaculis magna sit amet lobortis. Etiam lacinia sit amet eros a gravida. Nunc tristique scelerisque elementum. Aenean vitae quam nec augue dapibus semper. Sed gravida mauris varius, pharetra metus vitae, imperdiet orci. In posuere semper condimentum. Etiam feugiat risus tempus mauris pulvinar, cursus sodales felis convallis. Cras sed lorem interdum, ultricies justo vel, malesuada sem. Pellentesque enim lectus, rutrum quis gravida quis, gravida et massa. Duis felis est, cursus ut nibh et, ullamcorper cursus massa', 0, 1234, 1),
-(5, '20\" monitor', 'monitor, pc, testAll', 'pc monitor what more do you want', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur dignissim sem non metus malesuada interdum. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aenean et velit a neque placerat pretium ut nec mauris. Mauris vitae purus cursus, laoreet lacus at, vehicula arcu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus molestie iaculis magna sit amet lobortis. Etiam lacinia sit amet eros a gravida. Nunc tristique scelerisque elementum. Aenean vitae quam nec augue dapibus semper. Sed gravida mauris varius, pharetra metus vitae, imperdiet orci. In posuere semper condimentum. Etiam feugiat risus tempus mauris pulvinar, cursus sodales felis convallis. Cras sed lorem interdum, ultricies justo vel, malesuada sem. Pellentesque enim lectus, rutrum quis gravida quis, gravida et massa. Duis felis est, cursus ut nibh et, ullamcorper cursus massa', 0, 423, 1);
+INSERT INTO `item` (`item_id`, `item_name`, `item_keywords`, `item_short_description`, `item_description`, `auction_id`, `starting_price`, `delivery_cost`, `seller_id`) VALUES
+(1, 'sony tablet', 'tablet, android, testAll', 'crappy short text', 'Iam just typing some random shit as im not even arsed pasting in lorm ipsum.', 0, 10000000, 0, 1),
+(2, 'sony tablet', 'tablet, android, testAll', 'crappy short description', 'Iam just typing some random shit as im not even arsed pasting in lorm ipsum.', 0, 10000000, 0, 2),
+(3, 'iphone', 'mobile phone, Iphone, smart Phone, touchscreen, testAll', 'crappy short description', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sagittis dignissim consectetur. Mauris erat orci, scelerisque in pretium quis, elementum quis nisl. Curabitur at nibh sed felis volutpat luctus. Maecenas cursus venenatis nunc id dignissim. Ut vel ligula et turpis rhoncus gravida. Donec vel felis pellentesque, pellentesque neque vitae, pulvinar sapien. Praesent et purus at ex tincidunt blandit sed eu mauris. Vestibulum vulputate urna lectus, quis ornare tortor vulputate at. In ullamcorper malesuada hendrerit. Quisque lobortis erat non justo tempor volutpat. In hac habitasse platea dictumst. Fusce id viverra dui. Aliquam eu eros viverra, sollicitudin nisl sed, dictum felis. Aenean auctor eu purus a posuere. Nam ullamcorper diam ultricies cursus feugiat. Fusce posuere maximus nulla, sed vulputate velit consectetur ac.', 1, 32, 0, 1),
+(4, 'smart tv', 'tv, android, testAll, smart tv', 'this is a smart tv, like new', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur dignissim sem non metus malesuada interdum. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aenean et velit a neque placerat pretium ut nec mauris. Mauris vitae purus cursus, laoreet lacus at, vehicula arcu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus molestie iaculis magna sit amet lobortis. Etiam lacinia sit amet eros a gravida. Nunc tristique scelerisque elementum. Aenean vitae quam nec augue dapibus semper. Sed gravida mauris varius, pharetra metus vitae, imperdiet orci. In posuere semper condimentum. Etiam feugiat risus tempus mauris pulvinar, cursus sodales felis convallis. Cras sed lorem interdum, ultricies justo vel, malesuada sem. Pellentesque enim lectus, rutrum quis gravida quis, gravida et massa. Duis felis est, cursus ut nibh et, ullamcorper cursus massa', 0, 1234, 0, 1),
+(5, '20\" monitor', 'monitor, pc, testAll', 'pc monitor what more do you want', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur dignissim sem non metus malesuada interdum. Interdum et malesuada fames ac ante ipsum primis in faucibus. Aenean et velit a neque placerat pretium ut nec mauris. Mauris vitae purus cursus, laoreet lacus at, vehicula arcu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus molestie iaculis magna sit amet lobortis. Etiam lacinia sit amet eros a gravida. Nunc tristique scelerisque elementum. Aenean vitae quam nec augue dapibus semper. Sed gravida mauris varius, pharetra metus vitae, imperdiet orci. In posuere semper condimentum. Etiam feugiat risus tempus mauris pulvinar, cursus sodales felis convallis. Cras sed lorem interdum, ultricies justo vel, malesuada sem. Pellentesque enim lectus, rutrum quis gravida quis, gravida et massa. Duis felis est, cursus ut nibh et, ullamcorper cursus massa', 0, 423, 0, 1),
+(6, 'test', 'insert test', 'test', 'queryTest', 0, 20, 20, 1);
 
 -- --------------------------------------------------------
 
@@ -118,7 +121,23 @@ CREATE TABLE `item_sounds` (
 INSERT INTO `item_sounds` (`item_sounds_id`, `item_name_sounds`, `keyword_sounds`, `item_id`) VALUES
 (1, 'sony', 'sony', 1),
 (2, 'sony', 'sony', 1),
-(3, 'iphonesound', 'iphonesound', 3);
+(3, 'iphonesound', 'iphonesound', 3),
+(4, 'test', 'test', 4);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payments`
+--
+
+CREATE TABLE `payments` (
+  `id` int(6) NOT NULL,
+  `txnid` varchar(20) NOT NULL,
+  `payment_amount` decimal(7,2) NOT NULL,
+  `payment_status` varchar(25) NOT NULL,
+  `itemid` varchar(25) NOT NULL,
+  `createdtime` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -128,8 +147,14 @@ INSERT INTO `item_sounds` (`item_sounds_id`, `item_name_sounds`, `keyword_sounds
 
 CREATE TABLE `sold_items` (
   `sold_item_id` int(11) NOT NULL,
+  `item_name` varchar(45) NOT NULL,
+  `item_keywords` varchar(60) NOT NULL,
+  `item_short_description` varchar(100) NOT NULL,
+  `item_description` varchar(400) NOT NULL,
+  `delivery_cost` double NOT NULL,
   `price` double DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
+  `Seller_id` int(11) DEFAULT NULL,
+  `Buyer_id` int(11) NOT NULL,
   `date_purchased` date DEFAULT NULL,
   `date_listed` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -145,7 +170,7 @@ CREATE TABLE `users` (
   `first_name` varchar(45) DEFAULT NULL,
   `second_name` varchar(45) DEFAULT NULL,
   `username` varchar(45) DEFAULT NULL,
-  `user_password` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `user_password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `email_address` varchar(45) DEFAULT NULL,
   `home_address` varchar(45) DEFAULT NULL,
   `phone_number` int(11) NOT NULL,
@@ -209,8 +234,7 @@ ALTER TABLE `item`
 -- Indexes for table `item_images`
 --
 ALTER TABLE `item_images`
-  ADD PRIMARY KEY (`item_images_id`),
-  ADD KEY `item_id` (`item_id`);
+  ADD PRIMARY KEY (`item_images_id`);
 
 --
 -- Indexes for table `item_sounds`
@@ -220,11 +244,18 @@ ALTER TABLE `item_sounds`
   ADD KEY `item_id` (`item_id`);
 
 --
+-- Indexes for table `payments`
+--
+ALTER TABLE `payments`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `sold_items`
 --
 ALTER TABLE `sold_items`
   ADD PRIMARY KEY (`sold_item_id`),
-  ADD KEY `user_id_idx` (`user_id`);
+  ADD KEY `user_id_idx` (`Seller_id`),
+  ADD KEY `Buyer_id` (`Buyer_id`);
 
 --
 -- Indexes for table `users`
@@ -251,13 +282,13 @@ ALTER TABLE `user_rating`
 -- AUTO_INCREMENT for table `auctions`
 --
 ALTER TABLE `auctions`
-  MODIFY `auction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `auction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `item`
 --
 ALTER TABLE `item`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `item_images`
@@ -269,7 +300,7 @@ ALTER TABLE `item_images`
 -- AUTO_INCREMENT for table `item_sounds`
 --
 ALTER TABLE `item_sounds`
-  MODIFY `item_sounds_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `item_sounds_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `sold_items`
@@ -307,12 +338,6 @@ ALTER TABLE `item`
   ADD CONSTRAINT `item_ibfk_1` FOREIGN KEY (`seller_id`) REFERENCES `users` (`user_id`);
 
 --
--- Constraints for table `item_images`
---
-ALTER TABLE `item_images`
-  ADD CONSTRAINT `item_images_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `item` (`item_id`);
-
---
 -- Constraints for table `item_sounds`
 --
 ALTER TABLE `item_sounds`
@@ -322,7 +347,7 @@ ALTER TABLE `item_sounds`
 -- Constraints for table `sold_items`
 --
 ALTER TABLE `sold_items`
-  ADD CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+  ADD CONSTRAINT `user_id` FOREIGN KEY (`Seller_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `user_rating`

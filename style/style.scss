@@ -380,3 +380,17 @@ span{
 .form-error {
   display: none;
 }
+
+#search-bar {
+  padding-left: 8px;
+
+  input {
+    width: 350px;
+  }
+}
+
+@media (max-width: 991px) {
+  #search-bar {
+    padding-left: 0;
+  }
+}

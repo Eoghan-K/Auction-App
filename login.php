@@ -25,7 +25,7 @@
 								autocomplete='currentPassword' placeholder="Password" required >
 						</div>
 						
-						<input class="btn btn-lg btn-primary btn-block" value="Log Me In" id='loginBtn' type="submit">
+						<input class="btn btn-lg btn-primary btn-block" value="Log Me In" id='loginBtn' type="submit" name='submit'>
 					
 					</form>
 				
