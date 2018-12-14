@@ -10,7 +10,7 @@
             <div class="row image_shading">
                 <div id="headText" >
                     <h1>Contact Us</h1>
-                    <h2>We would love to hear from you</h1>
+                    <h2>We would love to hear from you</h2>
                 </div>
             </div>
         </div>
