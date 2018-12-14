@@ -55,5 +55,8 @@
     <script type="text/javascript" src="scripts/JavaScript/AjaxRequests.js"></script>
     <script type="text/javascript" src="scripts/JavaScript/SearchScript.js"></script>
     <script type="text/javascript"> window.loadInformation("<?php echo $_POST['search']; ?>", true,true);</script>
-</body>
-</html>
+
+<?php
+    include "includes/footer.php";
+
+?>

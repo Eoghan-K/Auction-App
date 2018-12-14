@@ -22,10 +22,10 @@
             $this->PDOConnection = $this->getConnection();
 
             $user = $this->findUser($this->email);
-            echo $user['user_id'];
+            
             if ($user) {
                 if ($this->authenticate($this->password, $user['user_password'])) {
-                    $this->createSession($user['user_id']);
+                    $this->createSession($user);
                     header( 'location: ../userPage.php' );
                 } else {
                     header( 'location: ../login.php?error');
@@ -59,9 +59,14 @@
             return false;
         }
         
-        private function createSession($id){
+        private function createSession( $user){
             session_start();
-            $_SESSION['id'] = $id;
+            $_SESSION['id'] = $user["user_id"];
+            $_SESSION[ "firstName" ] = $user[ "first_name" ];
+            $_SESSION[ "lastName" ] = $user[ "second_name" ];
+            $_SESSION[ "email" ] = $user[ "email_address" ];
+            $_SESSION[ "address" ] = $user[ "home_address" ];
+            $_SESSION[ "username" ] = $user[ "username" ];
             session_write_close();
         }
     }
