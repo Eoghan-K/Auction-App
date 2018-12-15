@@ -1,6 +1,6 @@
 
 $(document).ready(function(){
-
+    $('#endDate').datepicker();
     $('#submitBtn').on('click',function(){
         getAndPostData();
     });
@@ -10,7 +10,7 @@ $(document).ready(function(){
 function getAndPostData(){
     
     var name, itemPrice, deliveryPrice, shortDesc, fullDesc, keywords, 
-    condition, imageDetails, isAuction;
+    condition, imageDetails, isAuction,date;
     var fData = new FormData();
     //when controller is functional check all values are not null before posting
     name = document.getElementById('itemName').value;
@@ -21,6 +21,8 @@ function getAndPostData(){
     keywords = document.getElementById('keywords').value;
     condition = document.getElementById('condition').value;
     isAuction = document.getElementById('saleType').checked;
+    date = document.getElementById('endDate').value;
+
     alert(isAuction);
     imageDetails = getImageDetails();
     if(imageDetails[0] !== undefined){
@@ -34,7 +36,9 @@ function getAndPostData(){
     fData.append('keywords',keywords);
     fData.append('condition', condition);
     fData.append('isAuction', isAuction);
+    fData.append('date',date);
     fData.append('type', 'saleSubmission');
+    fData.append('action', "POST");
     if(initalizeRequest(fData)){
         executeRequest(fData);
     }

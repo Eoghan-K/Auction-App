@@ -199,23 +199,45 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%; }
-  #lgForm #checkForm {
-    flex-direction: row;
-    display: flex;
-    background: #f7f7f7;
-    width: -moz-fit-content;
-    width: fit-content;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-right: 5px;
-    padding-left: 15px;
-    border-radius: 10px;
-    margin: 15px;
-    align-items: center; }
   #lgForm input {
     margin: 10px; }
   #lgForm p {
     margin: 0px; }
+
+.checkForm {
+  flex-direction: row;
+  display: flex;
+  background: #f7f7f7;
+  width: -moz-fit-content;
+  width: fit-content;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 5px;
+  padding-left: 10px;
+  border-radius: 10px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  align-items: center; }
+  .checkForm input {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 5px;
+    margin-left: 5px; }
+  .checkForm p {
+    margin: 0px; }
+
+#dateContainer {
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-right: 0; }
+  #dateContainer p {
+    margin-top: 0px;
+    margin-bottom: 0;
+    margin-right: 10px;
+    margin-left: 0; }
+  #dateContainer input {
+    margin: 4px;
+    width: 115px; }
 
 #headText {
   height: fit-content;
@@ -223,9 +245,8 @@ body {
   color: white;
   margin: 0 auto;
   align-self: center; }
-
-#headText .row {
-  text-align: center; }
+  #headText .row {
+    text-align: center; }
 
 #header {
   height: 500px;

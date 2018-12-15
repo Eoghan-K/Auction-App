@@ -19,10 +19,21 @@
         <input name="full_description" id='fullDesc' placeholder="full_description" />
         <input name="keywords" id='keywords' placeholder="please enter item keywords seperate with a comma(,)" />
         <input name="condition" id='condition' placeholder="item_condition" />
-        <!--need to add select box for is auction-->
-        <div id="checkForm">
-            <p>Is this an auction</p>
-            <input name="isAuction" id="saleType" type="checkbox" />
+        
+       
+    </div>
+    <div class="row">
+        <div class="col-sm-3" >
+            <div class="checkForm">
+                <p>Auction</p>
+                <input name="isAuction" id="saleType" type="checkbox" />
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="checkForm" id="dateContainer">
+                <p>End-Date: </p>
+                <input type="text" id="endDate" />
+            </div>
         </div>
     </div>
     <div id="DragD" title="sellItem"></div>
@@ -37,6 +48,7 @@
    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script type="text/javascript" src="scripts/librarys/jquery.dragbetter/jquery.dragbetter.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="scripts/JavaScript/DragDropFileUpload.js"></script>
     <script src="scripts/JavaScript/AjaxRequests.js"></script>
     <script src="scripts/JavaScript/saleForm.js"></script>
