@@ -9,67 +9,69 @@
         private $PDOConnection;
         private $email;
         private $password;
+        private $user;
         
         public function __construct($data){
             foreach ( $data as $key=>$value ) {
                 $this->$key=$value;
             }
-    
+            
             $this->validateAndSanitize();
             
             $this->config = parse_ini_file('../Config.ini');
             
-            try{
-                $this->PDOConnection = new PDO("mysql:host=".$this->config['dburl']."; dbname=".$this->config['dbname'],$this->config['username'], $this->config['password'],
-                                               array(PDO::ATTR_PERSISTENT => true ));
-                $this->PDOConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            }catch(PDOException $e){
-                echo "Connection status: " . $e->getCode() . " Connection error message: " . $e->getMessage();
-                die("The Connection to the database failed");
-            }
+            $this->PDOConnection = $this->getConnection();
 
-            $user = $this->findUser($this->email);
-            echo $user['user_id'];
-            if ($user) {
-                if ($this->authenticate($this->password, $user['user_password'])) {
-                    $this->createSession($user['user_id']);
-                    header( 'location: ../userPage.php' );
-                } else {
-                    header( 'location: ../login.php?error');
-                }
-            } else {
-                header( 'location: ../login.php?error' );
+            $this->user = $this->findUser();
+            
+            if ($this->user) {
+                echo $this->user;
+               $this->authenticate();
             }
         }
     
         protected function validateAndSanitize () {
-            $this->email = filter_var(filter_var($this->email, FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
-            $this->password = filter_var($this->password, FILTER_SANITIZE_STRING);
+            $this->email = filter_var( filter_var( $this->email, FILTER_SANITIZE_EMAIL ), FILTER_VALIDATE_EMAIL );
+            $this->password = filter_var( $this->password, FILTER_SANITIZE_STRING );
             
-            if (empty( $this->email) || empty( $this->password)) {
-                header( 'location: ../login.php?error' );
+            if ( empty( $this->email ) || empty( $this->password ) ) {
+                $this->ToLogin( false );
             }
         }
         
-        public function findUser($email){
+        private function findUser(){
             $sql = 'SELECT * FROM users WHERE email_address = :email';
             $stmt = $this->PDOConnection->prepare($sql);
-            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+            $stmt->bindParam(':email', $this ->email, PDO::PARAM_STR);
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
         
-        public function authenticate($password, $hashedPassword){
-            if (password_verify($password, $hashedPassword)) {
-                return true;
+        private function authenticate(){
+            if (password_verify($this->password, $this->user[ 'user_password' ])) {
+                return $this->ToLogin( true );
             }
-            return false;
+            $this->ToLogin(false);
         }
         
-        public function createSession($id){
+        private function createSession($user){
             session_start();
-            $_SESSION['id'] = $id;
+            $_SESSION['id'] = $user["user_id"];
+            $_SESSION[ "firstName" ] = $user[ "first_name" ];
+            $_SESSION[ "lastName" ] = $user[ "second_name" ];
+            $_SESSION[ "email" ] = $user[ "email_address" ];
+            $_SESSION[ "address" ] = $user[ "home_address" ];
+            $_SESSION[ "username" ] = $user[ "username" ];
             session_write_close();
+        }
+        
+        private function ToLogin($success) {
+            if ($success){
+                $this->createSession( $this->user);
+                header( 'location: ../userPage.php' );
+            } else {
+                header( 'location: ../login.php?error' );
+            }
         }
     }
     
