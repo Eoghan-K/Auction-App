@@ -8,11 +8,12 @@ class AuctionChkExp extends DBConnection{
     
     public function __construct(){
         $this->updatePath('../../Config.ini');
-        $this->SQLGetExpired = "SELECT auction_id, item_id FROM auctions WHERE End_Date <= :current ";
+        $this->SQLGetExpired = "SELECT a.auction_id, a.item_id, b.bid_group, b.bidder_id FROM auctions AS a JOIN Bids AS b ON a.auction_id = b.auction_id WHERE End_Date <= :current ";
         
         $this->SQLMoveData = "INSERT INTO sold_items(item_name, item_keywords, item_short_description, item_description, delivery_cost, Seller_id, price, buyer_id)
         SELECT i.item_name, i.item_keywords, i.item_short_description, i.item_description, i.delivery_cost, i.seller_id, a.current_offer, a.bidder_id 
         FROM item AS i JOIN auctions AS a ON i.item_id = a.item_id WHERE a.auction_id = :auctionId";
+        
         /* cant get this to work
         $this->SQLDeleteAll = "DELETE itm, auc, bids, snd FROM item AS itm JOIN auctions AS auc ON itm.item_id = auc.item_id 
         JOIN item_sounds AS snd ON itm.item_id = snd.item_id
@@ -23,8 +24,8 @@ class AuctionChkExp extends DBConnection{
         $this->SQLDeleteSounds = "DELETE FROM item_sounds WHERE item_id= :itemId";
         $this->SQLDeleteAuction = "DELETE FROM auctions WHERE auction_id = :aucId";
         $this->SQLDeleteItem = "DELETE FROM item WHERE item_id = :itemId";
-        //user has won the auction so the big group is nolonger needed
-        $this->SQLDeleteBidGroup = "DELETE FROM Bids ";
+        //user has won the auction so the bid group is nolonger needed
+        $this->SQLDeleteBidGroup = "DELETE FROM Bids WHERE bid_group = :bidGroup AND bidder_id = :bidderId";
 
         $this->SQLUpdateImage = "UPDATE item_images SET sold_item_id = :soldItemId, item_id = 0 WHERE item_id = :itemId";
         $this->manageAuctions();
@@ -81,6 +82,11 @@ class AuctionChkExp extends DBConnection{
         
         $query = $this->PDOConnection->prepare($this->SQLDeleteSounds);
         $query->execute(array('itemId'=>$val['item_id']));
+
+        if(isset($val['bid_group'])){
+            $query = $this->PDOConnection->prepare($this->SQLDeleteBidGroup);
+            $query->execute(array('bidGroup'=>$val['bid_group'],'bidderId'=>$val['bidder_id']));
+        }
        
         $query = $this->PDOConnection->prepare($this->SQLDeleteAuction);
         $query->execute(array('aucId'=>$val['auction_id']));

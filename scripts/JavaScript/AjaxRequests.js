@@ -10,7 +10,7 @@ function initalizeRequest(fData){
     var result = false;
     switch(fData.get('type')){
         case 'saleSubmission':
-            urlRequest = 'scripts/SellItemDB.php';
+            urlRequest = 'scripts/SaleController.php';
             requestType = 'POST';
             result = true;
             break;
