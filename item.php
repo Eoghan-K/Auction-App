@@ -1,5 +1,10 @@
 <?php
     include "includes/header.php";
+    include "scripts/Item.php";
+    
+    use Item as I;
+    $item = new I(5);
+    $images = $item->getImages();
 ?>
 
 <div id="carouselExampleFade" class="carousel slide carousel-fade" data-ride="carousel">
