@@ -1,1 +1,8 @@
-.idea
+# IntelliJ
+*.iml
+.idea/workspace.xml
+.idea/modules.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/dictionaries
+.idea/libraries
