@@ -9,13 +9,16 @@
         private $PDOConnection;
         private $email;
         private $password;
+        private $isUser;
         
         public function __construct($data){
             foreach ( $data as $key=>$value ) {
                 $this->$key=$value;
             }
+            
+            $this->isUser = false;
     
-            $this->validateAndSanitize();
+            $this->validateAndSanitize($this->email);
             
             $this->config = parse_ini_file('../Config.ini');
             
@@ -25,7 +28,6 @@
             
             if ($user) {
                 if ($this->authenticate($this->password, $user['user_password'])) {
-                    $this->createSession($user);
                     header( 'location: ../userPage.php' );
                 } else {
                     header( 'location: ../login.php?error');
@@ -35,19 +37,19 @@
             }
         }
     
-        protected function validateAndSanitize () {
-            $this->email = filter_var(filter_var($this->email, FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
-            $this->password = filter_var($this->password, FILTER_SANITIZE_STRING);
+        protected function validateAndSanitize ($email) {
+            $this->email = filter_var( filter_var( $this->email, FILTER_SANITIZE_EMAIL ), FILTER_VALIDATE_EMAIL );
+            $this->password = filter_var( $this->password, FILTER_SANITIZE_STRING );
             
-            if (empty( $this->email) || empty( $this->password)) {
+            if ( empty( $this->email ) || empty( $this->password ) ) {
                 header( 'location: ../login.php?error' );
             }
         }
         
-        private function findUser($email){
+        private function findUser(){
             $sql = 'SELECT * FROM users WHERE email_address = :email';
             $stmt = $this->PDOConnection->prepare($sql);
-            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+            $stmt->bindParam(':email', $this ->email, PDO::PARAM_STR);
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         }
@@ -68,6 +70,10 @@
             $_SESSION[ "address" ] = $user[ "home_address" ];
             $_SESSION[ "username" ] = $user[ "username" ];
             session_write_close();
+        }
+        
+        private function ToLogin() {
+           header('location: ../login.php?error');
         }
     }
     
