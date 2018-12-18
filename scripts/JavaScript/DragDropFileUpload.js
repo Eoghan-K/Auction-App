@@ -115,6 +115,7 @@ function uploadImage(image, progressID){
     //tells the server if the image is for a user profile pic or sale pic if sale pic is it for a new sale
     //other features not yet implemented so default both to true
     if(page === "saleItem"){
+        alert('is sale');
         fData.append('isSale',"true");
         fData.append("isNewSale", "true");
     }else{
@@ -186,6 +187,7 @@ function uploadImage(image, progressID){
                     processDetails(recievedJson)
                 }
             }catch(e){
+                console.debug(data);
                 alert("error caught " + e);
                 uploadFailed(progressID);
             }

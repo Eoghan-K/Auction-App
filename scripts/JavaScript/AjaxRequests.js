@@ -63,7 +63,7 @@ function executeRequest(fData){
             
         },
         error:function(xhrm, statusText){
-            //console.debug("Error, could not get data from search: " + statusText);
+            console.debug("Error: " + statusText);
         }
         
     });

@@ -24,7 +24,7 @@ class SaleController extends DBConnection{
         $this->response = 'never set';
         session_start();
         $this->sellerID = $_SESSION['id'];
-        
+        $this->isAuction = $_POST['isAuction'];
         //set sql query strings
         $this->setupSQLStrings();
     }
@@ -68,7 +68,6 @@ class SaleController extends DBConnection{
     }
 
     public function processSale(){
-        $this->isAuction = $_POST['isAuction'];
         
         $this->nameSound = metaphone($this->itemName);
         $this->keywordSound = metaphone($this->keywords);
@@ -266,7 +265,7 @@ class SaleController extends DBConnection{
         }
     }
 
-    private function getAndSanitizeVars(){
+    public function getAndSanitizeVars(){
         //get all variables from the post and sanitize them
         $this->itemName = $this->validateAndSanitize($_POST['item_name']);
         $this->itemPrice = $this->validateAndSanitize($_POST['item_price'], 'float');
@@ -275,13 +274,16 @@ class SaleController extends DBConnection{
         $this->fullDescription = $this->validateAndSanitize($_POST['full_description']);
         $this->keywords = $this->validateAndSanitize($_POST['keywords']);
         $this->condition = $this->validateAndSanitize($_POST['condition']);
-        $this->endDate = $this->validateAndSanitize($_POST['endDate'], "date");
+        if($this->isAuction){
+            $this->endDate = $this->validateAndSanitize($_POST['date'], "date");
+        }
        
     }
 
-    protected function validateAndSanitize($var, $type = "string"){
+    protected function validateAndSanitize($var = null, $type = "string"){
 
         if((!isset($var) || $var === null || $var === "") && $_POST['action'] === "POST" && $type !== 'date'){
+            echo "was it date";
             die("variable was not set");
         }else if((!isset($var) || $var === null || $var === "") && $_POST['action'] === "PUT"){
             //if it is not set and the action is put then it is ok to have no entry
@@ -295,20 +297,21 @@ class SaleController extends DBConnection{
             return filter_var($var, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
 
         }else if($type === "date"){
+            
             if(isset($var)){
-            $date = array_reverse(explode("/", $var));
-            $result;
-            for($i = 0; $i < 3; $i++){
-                //validate int seems to return false for values like 12
-                //not sure why
-                $result = filter_var($date[$i],FILTER_VALIDATE_FLOAT);
+                $date = array_reverse(explode("/", $var));
+                $result;
+                for($i = 0; $i < 3; $i++){
+                    //validate int seems to return false for values like 12
+                    //not sure why
+                    $result = filter_var($date[$i],FILTER_VALIDATE_FLOAT);
         
-                if($result === false){
-                    //invalid date exit loop
-                    break;
-                }
+                    if($result === false){
+                        //invalid date exit loop
+                        break;
+                    }
 
-            }
+                }
             }
             if((isset($result) && $result === false) || !isset($var)){
                 //date is invalid get current and add one month
@@ -317,9 +320,14 @@ class SaleController extends DBConnection{
                 $tempDate = explode("-",date("Y-d"));
                 $time = mktime(11,55,00,$month,$tempDate[1],$tempDate[0]);
                 $date = date("Y-m-d h:i:s", $time);
+                echo "date should be " . $date . " ";
                 return $date;
             }else{
-                return implode("-",$date);  
+                //echo "date should be " . implode("-",$date) . " ";
+                $time = mktime(11,55,00,$date[2],$date[1],$date[0]);
+                $date = date("Y-m-d h:i:s", $time);
+                //return implode("-",$date) . " 11:55:00"; 
+                return $date; 
             }
 
         }else{
@@ -335,7 +343,7 @@ if($_POST['action'] === "POST"){
     //check, clean and set variables
     $controller->getAndSanitizeVars();
     $res = $controller->processSale();
-    if($res = "NotLoggedIn"){
+    if($res === "NotLoggedIn"){
         $arr['message'] = "NotLoggedIn";
         echo json_encode($arr);
     }else{

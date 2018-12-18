@@ -41,5 +41,7 @@ function getAndPostData(){
     fData.append('action', "POST");
     if(initalizeRequest(fData)){
         executeRequest(fData);
+    }else{
+        alert('failed');
     }
 }
