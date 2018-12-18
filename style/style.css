@@ -726,3 +726,7 @@ section.clients-home .clients-logos .client-logos-repeater img {
   background-size: cover;
   color: #fff;
 }
+
+.text-muted {
+  color:Black;
+}
