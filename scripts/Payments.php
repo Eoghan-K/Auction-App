@@ -1,8 +1,4 @@
 <?php
-
-
-
-
 //general configuration for payments
 $paypalConfig = [
     'email' => 'topChoiceAuctions@gmail.com',
