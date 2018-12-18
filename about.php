@@ -1,6 +1,11 @@
 <?php
     include "includes/header.php";
 ?>
+
+
+
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
 <!--
 <div class="ct-pageWrapper" id="ct-js-wrapper">
         <section class="company-heading intro-type" id="parallax-one">
@@ -37,12 +42,6 @@
         </section>
 -->
 
-<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-<link rel="stylesheet" href="about-us.css">
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 <div class="ct-pageWrapper" id="ct-js-wrapper">
     <section class="company-heading intro-type" id="parallax-one">
@@ -55,7 +54,7 @@
                 </div>
             </div>
         </div>
-        <div class="parallax" id="parallax-cta" style="background-image:url(images/hero.jpg);">
+        <div class="parallax" id="parallax-cta" style="background-image:url(images/hero.jpg">
             &nbsp;
         </div>
     </section>
@@ -86,7 +85,23 @@
                     Here at TopChoiceAuctions, we pride ourselves on having amazing customer service. We will make sure to fix any issues you may have in an efficient and correct manor. You can send us an email or fill out our form, we will make sure to email you within 3 working days.
                 </p>
             </div>
-            <a class="ct-u-marginTop60 btn btn-solodev-red-reversed btn-fullWidth-sm ct-u-size19" href="/">Contact Us Now!</a>
+
+
+
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+
+            <a class="ct-u-marginTop60 btn btn-solodev-red-reversed btn-fullWidth-sm ct-u-size19" href="contact.php">Contact Us Now!</a>
         </div>
     </section>
 

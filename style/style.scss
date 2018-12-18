@@ -426,7 +426,10 @@ body {
   }
 }
 
-/*About us Page*/
+
+/* About US Page*/
+
+
 
 .separator-type, .title-type, .intro-type, .content-type .intro-type p {
   position: relative;
@@ -437,7 +440,7 @@ body {
 #product-header-section, .intro-type .container {
   padding: 68px 15px 72px !important;
 }
-@media (min-width: 1630px)
+@media (min-width: 1630px){}
 .container {
   width: 1630px;
 }
@@ -455,8 +458,8 @@ body {
   z-index: -10;
 }
 .company-heading h1 {
-  margin-bottom: 40px;
-  line-height: 80px;
+  margin-bottom: 10px;
+  line-height: 20px;
   color: #fff;
   font-weight: 700 !important;
   text-align: center;
@@ -507,19 +510,23 @@ body {
   background: linear-gradient(rgba(0, 0, 0, 0.45),rgba(0, 0, 0, 0.45)), url(https://www.solodev.com/assets/culture.jpg) top no-repeat;
   /* background-color: #095c87; */
   /* color: #fff; */
+  text-align: center;
 }
 .company-sections, .careers-sections, .left-headquarter-section-img, .right-headquarter-section-img {
   text-align: center;
 }
 .ct-u-paddingBoth100 {
   padding: 100px 15px;
+  text-align: center;
 }
 .company-sections h2, .careers-sections h2, .perks-section h2 {
   font-weight: 800;
   font-size: 50px;
+  text-align: center;
 }
 .company-sections h2, .company-sections h3, .careers-sections h2, .perks-section h2 {
   font-family: 'proxima-nova', sans-serif;
+  text-align: center;
 }
 .slick-slider {
   margin-bottom: 0;
@@ -666,5 +673,4 @@ section.clients-home .clients-logos .client-logos-repeater img {
 .culture-section {
   background-size: cover;
   color: #fff;
-}
 }
