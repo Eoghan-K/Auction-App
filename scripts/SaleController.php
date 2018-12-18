@@ -81,7 +81,6 @@ class SaleController extends DBConnection{
                 $this->imagesPresent = false;
             }
          
-            
             return "success";
         }else{
             
@@ -124,7 +123,7 @@ class SaleController extends DBConnection{
             }
 
             //if the sale is an auction then prepare and execute the statement for an auction
-            if($this->isAuction){
+            if($this->isAuction === true || $this->isAuction === "true"){
                 //prepare and execute sqlauction query
                 $query = $PDOConnection->prepare($this->sqlAuction);
                 $query->execute(array('itemID'=>$itemID, 'startingPrice'=>$this->itemPrice, 'endDate'=>$this->endDate));
@@ -184,7 +183,7 @@ class SaleController extends DBConnection{
                     $this->uploaded = true;
                 }
 
-                if($this->isAuction){
+                if($this->isAuction === true || $this->isAuction === "true"){
                     $query = $PDOConnection->prepare($this->sqlUpdateAuction);
                     $query->execute(array('price'=>$this->itemPrice,'itemId'=>$this->$itemId));
                 }
@@ -274,7 +273,7 @@ class SaleController extends DBConnection{
         $this->fullDescription = $this->validateAndSanitize($_POST['full_description']);
         $this->keywords = $this->validateAndSanitize($_POST['keywords']);
         $this->condition = $this->validateAndSanitize($_POST['condition']);
-        if($this->isAuction){
+        if($this->isAuction === true || $this->isAuction === "true"){
             $this->endDate = $this->validateAndSanitize($_POST['date'], "date");
         }
        

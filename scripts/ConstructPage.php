@@ -58,12 +58,13 @@ class ConstructPage{
             //loop for individual items
             while($currentRowItem > 0){
                 //TODO add image name and short description to db
-                $imageName = $this->itemArray[$indexCols]['image_name'];
+                $imageName = isset($this->itemArray[$indexCols]['image_name']) ? $this->itemArray[$indexCols]['image_name'] : "default";
                 $shortDescription = $this->itemArray[$indexCols]['short_description'];
                 //NOTE the server should hold the path and the database should hold the name on server
                 //this is so if file structer is ever changed the database will not have to be updated
-                $imgUrl = $this->itemArray[$indexCols]['image_url'];
+                $imgUrl = isset($this->itemArray[$indexCols]['image_url']) ? $this->itemArray[$indexCols]['image_url'] : "1.jpg";
                 $itemName = $this->itemArray[$indexCols]['item_name'];
+                $price = $this->itemArray[$indexCols]['price'];
                 
                 //now that all nessicary data is gathered its time to print to screen
                 
@@ -73,6 +74,7 @@ class ConstructPage{
                           <div class="card-body">
                             <h5 class="card-title"><?=$itemName ?></h5>
                             <p class="card-text"><?=$shortDescription ?></p>
+                            <p class="card-text">&euro; <?=$price ?> </p> 
                           </div>
                         </div>
                     </a><?php
@@ -110,7 +112,7 @@ class ConstructPage{
                 //this is so if file structer is ever changed the database will not have to be updated
                 $imgUrl = $this->itemArray[$i]['image_url'];
                 $itemName = $this->itemArray[$i]['item_name'];
-                
+                $price = $this->itemArray[$indexCols]['price']
                 //now that all nessicary data is gathered its time to print to screen
                 
                 ?>
@@ -122,6 +124,7 @@ class ConstructPage{
                     <div class="card-body">
                         <h5 class="card-title"><?=$itemName ?></h5>
                         <p class="card-text"><?=$shortDescription ?></p>
+                        <p class="card-text">&euro; <?=$price ?> </p>
                     </div>
                 </div>
             </a>

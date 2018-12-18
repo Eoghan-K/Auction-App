@@ -16,21 +16,24 @@ class SearchDB extends DBConnection{
         
         //the below Request is to test if I can get this to work with AJAX
         //if works dont forget to sanitize string
-        $data = $_GET['query'];
+        $this->data = $_GET['query'];
+        
         $this->isGrid = $_GET['grid'];
         $this->type = $_GET['type'];
         //setup arrays to store results
         $this->allResultsIDs = array();
         $this->filteredResults = array();
+        $this->countItems = 0;
         //create the statements for future use
         $this->createSqlStatements();
-        
-        if(isset($data) && $data !== null){
-            $this->countItems = 0;
+        if($this->type === "currentListings"){
+            $this->commenceSearch();
+        }else if(isset($this->data) && $this->data !== null){
+            
             //originalData is the data unaltered
-            $this->originalData = $data;
+            $this->originalData = $this->data;
             //add wildcards to the data string
-            $this->data = '%' . $data . '%';
+            $this->data = '%' . $this->data . '%';
             //sound out the entire string (must do this before adding wildcards to the data string)
             $this->dataSound = "%" . metaphone($this->originalData) . "%";
             //split the string up into individual words if there are multiple (must do this before adding wildcards to data string)
@@ -50,7 +53,7 @@ class SearchDB extends DBConnection{
         //select necessary fields from item if the item name or keywords match (in some way (contains wildcards)) to the users input
         $this->sqlSearchString = "SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.auction_id, i.delivery_cost, img.image_url, img.image_name,
         CASE WHEN auction_id > 0 
-        THEN (SELECT a.current_offer FROM auctions AS a WHERE i.auction_id = a.auction_id) 
+        THEN (SELECT a.current_offer AS starting_price FROM auctions AS a WHERE i.auction_id = a.auction_id) 
         ELSE starting_price END AS starting_price
         FROM item AS i 
         LEFT JOIN item_images AS img ON i.item_id=img.item_id
@@ -58,16 +61,16 @@ class SearchDB extends DBConnection{
 
         $this->sqlCurrentListings = "SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.auction_id, i.delivery_cost, img.image_url, img.image_name,
         CASE WHEN auction_id > 0 
-        THEN (SELECT a.current_offer FROM auctions AS a WHERE i.auction_id = a.auction_id) 
+        THEN (SELECT a.current_offer AS starting_price FROM auctions AS a WHERE i.auction_id = a.auction_id) 
         ELSE starting_price END AS starting_price
         FROM item AS i 
         LEFT JOIN item_images AS img ON i.item_id=img.item_id 
-        WHERE i.seller_id LIKE :input";
+        WHERE i.seller_id = :input";
         //create sql statement for the sounds of the values the user sent
         //select necessary fields from item if the item name or keyword sound similar to the users input 
         $this->sqlSearchSound = 'SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.auction_id, img.image_url, img.image_name,
         CASE WHEN i.auction_id > 0 
-        THEN (SELECT current_offer FROM auctions AS a WHERE auction_id = a.auction_id) 
+        THEN (SELECT current_offer AS starting_price FROM auctions AS a WHERE auction_id = a.auction_id) 
         ELSE starting_price END AS starting_price 
         FROM item_sounds AS sound 
 		JOIN item AS i ON sound.item_id=i.item_id
@@ -81,8 +84,7 @@ class SearchDB extends DBConnection{
             These details can be quite large especially when the user could have 100s-1000s of results
             so requesting them only when needed will save space and hopefully reduce request times.
             NB inorder to keep MYSQL happy we have grouped by image item ids but the grouping is not important.
-            SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.item_description, img.item_images_id, img.image_name, img.image_url, seller.user_id, seller.username, AVG(userRating.rating) AS rating
-        
+            
         */
         $this->sqlAllDetails = "SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.item_description, i.starting_price, 
         img.item_images_id, img.image_name, img.image_url, seller.user_id, seller.username, a.current_offer, a.End_date, AVG(userRating.rating) AS rating
@@ -97,7 +99,11 @@ class SearchDB extends DBConnection{
     public function commenceSearch(){
         //if the string length is greater than 2 then begin search
         //otherwise ask user to enter a valid search (something with more than 2 letters)
-        if(strlen($this->originalData) > 2){
+        if($this->type === "currentListings"){
+            
+            $this->queryDB($this->data, $this->type);
+            echo json_encode($this->filteredResults);
+        }else if(strlen($this->originalData) > 2){
             //begin searching for whole string
             $this->queryDB($this->data, 'string');
             $this->queryDB($this->dataSound, 'sound');
@@ -134,6 +140,9 @@ class SearchDB extends DBConnection{
             case 'sound':
                 $sql = $this->sqlSearchSound;
                 break;
+            case 'currentListings':
+                $sql = $this->sqlCurrentListings;
+            break;
             case 'missingDetails':
                 $sql = $this->sqlAllDetails;
                 break;
@@ -150,10 +159,12 @@ class SearchDB extends DBConnection{
         if(!isset($results) || !isset($type)){
             exit("SearchDB: please ensure all data has been passed to function");
         }
-
+        
         if($type !== 'missingDetails'){
+            
             //this function filters out any redundant entries and compiles results into one array
             foreach($results as $key=>$val){
+                
                 if(!in_array($val['item_id'], $this->allResultsIDs)){
                     //add item id to the allResultsIDs inoreder to keep track of what has already been added
                     Array_Push($this->allResultsIDs, $val['item_id']);
@@ -168,7 +179,7 @@ class SearchDB extends DBConnection{
                     $this->filteredResults[$this->countItems]['auction_id'] = $val['auction_id'];
                     $this->filteredResults[$this->countItems]['image_name'] = isset($val['images']) ? $this->validateAndSanitize($val['image_name']) : "noimage";
                     //image url is not an actual url so clean it as if it was a normal string
-                    $this->filteredResults[$this->countItems]['image_url'] = isset($val['image_url']) ? $this->validateAndSanitize($val['image_url']) : "/images/sales/1.jpg";
+                    $this->filteredResults[$this->countItems]['image_url'] = isset($val['image_url']) ? $this->validateAndSanitize($val['image_url']) : "default.png";
                     $this->filteredResults[$this->countItems]['price'] = $val['starting_price'];
                     $this->filteredResults[$this->countItems]['deliveryCount'] = $val['delivery_cost'];
                     //increase the index
@@ -183,7 +194,7 @@ class SearchDB extends DBConnection{
            $this->filteredResults[0]['short_description'] = $this->validateAndSanitize($results['item_short_description']);
            $this->filteredResults[0]['date'] = $results['date_listed'];
            $this->filteredResults[0]['full_description'] = $this->validateAndSanitize($results['item_description']);
-           $this->filteredResults[0]['starting_price'] = $results['starting_price'];
+           $this->filteredResults[0]['price'] = $results['starting_price'];
            $this->filteredResults[0]['auction_id'] = $results['auction_id'];
            $this->filteredResults[0]['current_offer'] = $results['current_offer'];
            $this->filteredResults[0]['End_date'] = $results['End_date'];

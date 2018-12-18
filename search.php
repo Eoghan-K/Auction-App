@@ -57,18 +57,20 @@
     <script type="text/javascript"> 
     <?php 
         
-        $id = isset($_SESSION['id']) ? $_GET['search'] : 0;
+        
         $search;
         $isCurrentListings = "false";
         if(isset($_GET['search']) && $_GET['search'] !== ""){
+            
             $search = $_GET['search'];
         }else{
+            $id = $_SESSION['id'];
             $search = $id;
             $isCurrentListings = "true";
         }
         
     ?>
-    window.loadInformation("<?php echo $search; ?>", true,true, <?php echo $isCurrentListings; ?>);</script>
+    window.loadInformation("<?php echo $search; ?>", true,true,<?php echo $isCurrentListings; ?>);</script>
 
 <?php
     include "includes/footer.php";
