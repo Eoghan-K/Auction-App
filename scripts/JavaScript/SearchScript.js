@@ -12,8 +12,7 @@ window.loadInformation = function(data, grid, newInformation, isCurrentListings)
     }
     
     isGrid = grid;
-    if(isCurrentListings){
-       
+    if(isCurrentListings === true || isCurrentListings === "true"){
         query = {'query': data,
                 'grid' : isGrid,
                 'type':'currentListings'}
@@ -43,6 +42,7 @@ function loadNewInfo(query){
         data: query,
         success: function(data){
            try {
+                //alert(data);
                 //parsing the data is not really important as the data as the encoded data is fine to use
                 //parsing the data is just a a way to check it is a valid json before sending it to the changeLayout function
                 JSON.parse(data);
