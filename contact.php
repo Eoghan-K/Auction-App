@@ -4,6 +4,7 @@ include "includes/header.php";
 ?>
 
 
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-12" id="header">
@@ -107,6 +108,94 @@ include "includes/header.php";
         </div>
     </div>
 </div>
+
+
+<!--
+
+<?php
+///*
+// * Just General Configuration put in here.
+// *
+// */
+//
+////This email address will be in the 'From' field of the automated email
+//$from = 'Demo contact form <demo@domain.com>';
+//
+//// This is the email that it will be sent to.
+//$sendTo = 'Demo contact form <demo@domain.com>';
+//
+//// The subject of the email itself
+//$subject = 'New message from contact form';
+//
+//// name of the fields of the form, as well as general translations for them
+//// Array variable name --> Text that will appear in the created email.
+//$fields = array('name' => 'Name', 'surname' => 'Surname', 'phone' => 'Phone', 'email' => 'Email', 'message' => 'Message');
+//
+//// This message will be displayed if everything went well.
+//$okMessage = 'Contact form successfully submitted. Thank you, I will get back to you soon!';
+//
+//// This message will be displayed if everything went wrong.
+//$errorMessage = 'There was an error while submitting the form. Please try again later';
+//
+///*
+// *  Now we can send the email.
+// */
+//
+//// Remember, you can turn this off by using the following code snippet: 'error_reporting(0);'
+//// Turn if off if you are not debugging and / or do not need error reporting
+//error_reporting(E_ALL & ~E_NOTICE);
+//
+//
+//// try catch.
+//
+//try
+//{
+//
+//    if(count($_POST) == 0) throw new \Exception('Form is empty');
+//
+//    $emailText = "You have a new message from your contact form\n=============================\n";
+//
+//    foreach ($_POST as $key => $value) {
+//        // If the field exists in the $fields array, include it in the email
+//        if (isset($fields[$key])) {
+//            $emailText .= "$fields[$key]: $value\n";
+//        }
+//    }
+//
+//    // All the neccessary headers for the email.
+//    $headers = array('Content-Type: text/plain; charset="UTF-8";',
+//        'From: ' . $from,
+//        'Reply-To: ' . $from,
+//        'Return-Path: ' . $from,
+//    );
+//
+//    // Send email
+//    mail($sendTo, $subject, $emailText, implode("\n", $headers));
+//
+//    $responseArray = array('type' => 'success', 'message' => $okMessage);
+//}
+//catch (\Exception $e)
+//{
+//    $responseArray = array('type' => 'danger', 'message' => $errorMessage);
+//}
+//
+//
+//// if requested by AJAX request return JSON response
+//if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+//    $encoded = json_encode($responseArray);
+//
+//    header('Content-Type: application/json');
+//
+//    echo $encoded;
+//}
+//// else just display the message
+//else {
+//    echo $responseArray['message'];
+//}
+//?>
+
+-->
+
 <?php
 
 include "includes/bootstrapScripts.php";
