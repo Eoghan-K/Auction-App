@@ -3,25 +3,32 @@ var $reference = $('#test');
 //defaults to true
 var isGrid = true;
 var encodedData;
-var formData;
 
-window.loadInformation = function(data, grid, newInformation){
+
+window.loadInformation = function(data, grid, newInformation, isCurrentListings){
     if(grid === isGrid && newInformation === false){
         //there is nothing left to do so exit script
         return;
     }
-    formData = new FormData();
-    formData.append('layout',grid);
-    isGrid = grid;
     
-    if(newInformation){
-        loadNewInfo(data);
-        formData.append('query',data);
-        formData.append('type','search');
+    isGrid = grid;
+    if(isCurrentListings){
+       
+        query = {'query': data,
+                'grid' : isGrid,
+                'type':'currentListings'}
+        loadNewInfo(query);
+    }else if(newInformation){
+        
+        query = {'query': data,
+                'grid' : isGrid,
+                'type':'search'}
+        
+        loadNewInfo(query);
+        
     }else{
         changeLayout();
-        formData.append('data',encodedData);
-        formData.append('type', 'searchLayout');
+
     }
     
     
@@ -33,10 +40,7 @@ function loadNewInfo(query){
     $.ajax({
         type: "GET",
         url: 'scripts/SearchDB.php',
-        data: {
-                'query': query,
-                'grid' : isGrid
-            },
+        data: query,
         success: function(data){
            try {
                 //parsing the data is not really important as the data as the encoded data is fine to use

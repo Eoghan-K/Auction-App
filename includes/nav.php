@@ -22,7 +22,7 @@
                 <a class="nav-link" href="./about.php">About</a>
             </li>
             <li class="nav-item">
-                <form id='search-bar' class="form-inline my-2 my-lg-0" method="POST" action="search.php">
+                <form id='search-bar' class="form-inline my-2 my-lg-0" method="GET" action="search.php">
                     <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"
                         name="search">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>

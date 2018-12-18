@@ -54,7 +54,21 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script type="text/javascript" src="scripts/JavaScript/AjaxRequests.js"></script>
     <script type="text/javascript" src="scripts/JavaScript/SearchScript.js"></script>
-    <script type="text/javascript"> window.loadInformation("<?php echo $_POST['search']; ?>", true,true);</script>
+    <script type="text/javascript"> 
+    <?php 
+        
+        $id = isset($_SESSION['id']) ? $_GET['search'] : 0;
+        $search;
+        $isCurrentListings = "false";
+        if(isset($_GET['search']) && $_GET['search'] !== ""){
+            $search = $_GET['search'];
+        }else{
+            $search = $id;
+            $isCurrentListings = "true";
+        }
+        
+    ?>
+    window.loadInformation("<?php echo $search; ?>", true,true, <?php echo $isCurrentListings; ?>);</script>
 
 <?php
     include "includes/footer.php";

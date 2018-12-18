@@ -9,8 +9,8 @@ class SearchDB extends DBConnection{
 
     private $originalData, $data, $dataDecon, $dataSound;
     private $filteredResults, $allResultsIDs, $countItems;
-    private $sqlSearchSound, $sqlSearchString, $sqlAllDetails, $sqlAllImages;
-    private $isGrid;
+    private $sqlSearchSound, $sqlSearchString, $sqlAllDetails, $sqlAllImages, $sqlCurrentListings;
+    private $isGrid, $type;
 
     public function __construct(){
         
@@ -18,6 +18,12 @@ class SearchDB extends DBConnection{
         //if works dont forget to sanitize string
         $data = $_GET['query'];
         $this->isGrid = $_GET['grid'];
+        $this->type = $_GET['type'];
+        //setup arrays to store results
+        $this->allResultsIDs = array();
+        $this->filteredResults = array();
+        //create the statements for future use
+        $this->createSqlStatements();
         
         if(isset($data) && $data !== null){
             $this->countItems = 0;
@@ -30,11 +36,6 @@ class SearchDB extends DBConnection{
             //split the string up into individual words if there are multiple (must do this before adding wildcards to data string)
             $this->dataDecon = explode(" ", $this->originalData);
        
-            //setup arrays to store results
-            $this->allResultsIDs = array();
-            $this->filteredResults = array();
-            //create the statements for future use
-            $this->createSqlStatements();
             //below is a test to see if I can get this to work with AJAX
             $this->commenceSearch();
         }else{
@@ -52,8 +53,16 @@ class SearchDB extends DBConnection{
         THEN (SELECT a.current_offer FROM auctions AS a WHERE i.auction_id = a.auction_id) 
         ELSE starting_price END AS starting_price
         FROM item AS i 
-        JOIN item_images AS img ON i.item_id=img.item_id AND img.item_image_num=1 
+        LEFT JOIN item_images AS img ON i.item_id=img.item_id
         WHERE i.item_name LIKE :input OR i.item_keywords LIKE :input";
+
+        $this->sqlCurrentListings = "SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.auction_id, i.delivery_cost, img.image_url, img.image_name,
+        CASE WHEN auction_id > 0 
+        THEN (SELECT a.current_offer FROM auctions AS a WHERE i.auction_id = a.auction_id) 
+        ELSE starting_price END AS starting_price
+        FROM item AS i 
+        LEFT JOIN item_images AS img ON i.item_id=img.item_id 
+        WHERE i.seller_id LIKE :input";
         //create sql statement for the sounds of the values the user sent
         //select necessary fields from item if the item name or keyword sound similar to the users input 
         $this->sqlSearchSound = 'SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.auction_id, img.image_url, img.image_name,
@@ -62,7 +71,7 @@ class SearchDB extends DBConnection{
         ELSE starting_price END AS starting_price 
         FROM item_sounds AS sound 
 		JOIN item AS i ON sound.item_id=i.item_id
-		JOIN item_images AS img ON i.item_id=img.item_id AND img.item_image_num=1
+		LEFT JOIN item_images AS img ON i.item_id=img.item_id
         WHERE sound.item_name_sounds LIKE :input OR sound.keyword_sounds LIKE :input';
         
         /* this sql statement gets the rest of the items details that were excluded from previous request,
@@ -72,13 +81,17 @@ class SearchDB extends DBConnection{
             These details can be quite large especially when the user could have 100s-1000s of results
             so requesting them only when needed will save space and hopefully reduce request times.
             NB inorder to keep MYSQL happy we have grouped by image item ids but the grouping is not important.
+            SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.item_description, img.item_images_id, img.image_name, img.image_url, seller.user_id, seller.username, AVG(userRating.rating) AS rating
+        
         */
-        $this->sqlAllDetails = "SELECT i.item_description, img.item_images_id, img.image_name, img.image_url, seller.user_id, seller.username, AVG(userRating.rating) AS rating
+        $this->sqlAllDetails = "SELECT i.item_id, i.item_name, i.item_short_description, i.date_listed, i.item_description, i.starting_price, 
+        img.item_images_id, img.image_name, img.image_url, seller.user_id, seller.username, a.current_offer, a.End_date, AVG(userRating.rating) AS rating
         FROM item AS i
         JOIN users AS seller ON i.seller_id=seller.user_id
-        JOIN user_rating  AS userRating ON i.seller_id = userRating.user_id
-        JOIN item_images AS img ON i.item_id=img.item_id
-        WHERE i.item_id = :input GROUP BY img.item_images_id";
+        LEFT JOIN user_rating  AS userRating ON i.seller_id = userRating.user_id
+        LEFT JOIN item_images AS img ON i.item_id = img.item_id
+        LEFT JOIN auctions as a ON i.auction_id = a.auction_id
+        WHERE i.item_name = :input GROUP BY img.item_images_id";
     }
 
     public function commenceSearch(){
@@ -153,9 +166,9 @@ class SearchDB extends DBConnection{
                     $this->filteredResults[$this->countItems]['short_description'] = $this->validateAndSanitize($val['item_short_description']);
                     $this->filteredResults[$this->countItems]['date'] = $val['date_listed'];
                     $this->filteredResults[$this->countItems]['auction_id'] = $val['auction_id'];
-                    $this->filteredResults[$this->countItems]['image_name'] = $this->validateAndSanitize($val['image_name']);
+                    $this->filteredResults[$this->countItems]['image_name'] = isset($val['images']) ? $this->validateAndSanitize($val['image_name']) : "noimage";
                     //image url is not an actual url so clean it as if it was a normal string
-                    $this->filteredResults[$this->countItems]['image_url'] = $this->validateAndSanitize($val['image_url']);
+                    $this->filteredResults[$this->countItems]['image_url'] = isset($val['image_url']) ? $this->validateAndSanitize($val['image_url']) : "/images/sales/1.jpg";
                     $this->filteredResults[$this->countItems]['price'] = $val['starting_price'];
                     $this->filteredResults[$this->countItems]['deliveryCount'] = $val['delivery_cost'];
                     //increase the index
@@ -165,10 +178,18 @@ class SearchDB extends DBConnection{
         }else{
             //NOTE might actually split querys and get images seperatly but the most images that will return is 4 so it may be unnecessary 
             //this should only have one valid result
-           $this->filteredResults[0]['full_description'] = $this->validateAndSanitize($val['item_description']);
-           $this->filteredResults[0]['seller_id'] = $val['user_id'];
-           $this->filteredResults[0]['seller_name'] = $this->validateAndSanitize($val['username']);
-           $this->filteredResults[0]['rating'] = $val['rating']; 
+           $this->filteredResults[0]['item_id'] = $results['item_id'];
+           $this->filteredResults[0]['item_name'] = $this->validateAndSanitize($results['item_name']);
+           $this->filteredResults[0]['short_description'] = $this->validateAndSanitize($results['item_short_description']);
+           $this->filteredResults[0]['date'] = $results['date_listed'];
+           $this->filteredResults[0]['full_description'] = $this->validateAndSanitize($results['item_description']);
+           $this->filteredResults[0]['starting_price'] = $results['starting_price'];
+           $this->filteredResults[0]['auction_id'] = $results['auction_id'];
+           $this->filteredResults[0]['current_offer'] = $results['current_offer'];
+           $this->filteredResults[0]['End_date'] = $results['End_date'];
+           $this->filteredResults[0]['seller_id'] = $results['user_id'];
+           $this->filteredResults[0]['seller_name'] = $this->validateAndSanitize($results['username']);
+           $this->filteredResults[0]['rating'] = $results['rating']; 
            //there could be multiple images related to the one item
            foreach($results as $key=>$val){
                 if(!in_array($val['image_id'], $image_ids)){
@@ -189,6 +210,7 @@ class SearchDB extends DBConnection{
         if($var === null || $var === ""){
             //TODO redirect to registration page and inform the user to fill in missing data
             die("data was null");
+        
         }
         
         //I want to use this method to clean vars aswell but I cannot get filter_input to work so I might just use it to check if null
