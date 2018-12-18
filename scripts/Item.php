@@ -9,10 +9,10 @@
 		private $PDOConnection;
 		private $item;
 		private $images;
-		private $title;
+		private $id;
 		
-		public function __construct( $title ) {
-			$this->title = $title;
+		public function __construct( $id ) {
+			$this->id = $id;
 			$root = $_SERVER[ 'DOCUMENT_ROOT' ];
 			$this->updatePath( $root . '/Config.ini' );
 			$this->config = parse_ini_file( $root . '/Config.ini' );
@@ -22,15 +22,15 @@
 		}
 		
 		private function findItem() {
-			$sql = 'SELECT * FROM item WHERE item_name = :title';
+			$sql = 'SELECT * FROM item WHERE item_id = :id';
 			$stmt = $this->PDOConnection->prepare( $sql );
-			$stmt->bindParam( ':title', $this->title, PDO::PARAM_STR );
+			$stmt->bindParam( ':id', $this->id, PDO::PARAM_INT );
 			$stmt->execute();
 			return $stmt->fetch( PDO::FETCH_ASSOC );
 		}
 		
 		private function findImages( $id ) {
-			$sql = 'SELECT image_url FROM item_images WHERE item_id = :id';
+			$sql = 'SELECT * FROM item_images WHERE item_id = :id';
 			$stmt = $this->PDOConnection->prepare( $sql );
 			$stmt->bindParam( ':id', $id, PDO::PARAM_INT );
 			$stmt->execute();
