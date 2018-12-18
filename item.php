@@ -1,5 +1,19 @@
 <?php
     include "includes/header.php";
+    include "scripts/Item.php";
+    
+    $item = null;
+    $images = null;
+    
+    if(isset($_GET["title"])){
+    	$title = $_GET["title"];
+	    $i = new Item( $title );
+	    $item = $i->getItem();
+	    $images = $i->getImages();
+    } else {
+    	header( 'location: ../index.php');
+    }
+    
 ?>
     
     <div id="myCarousel" class="carousel slide" data-ride="carousel">
@@ -62,6 +76,6 @@
     </div>
 
 <?php
-    include "includes/bootstrapScripts.php";
+    include "includes/footer.php";
 
 ?>
