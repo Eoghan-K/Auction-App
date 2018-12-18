@@ -238,7 +238,14 @@ body {
 #lgForm {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 100%; 
+}
+  #lgForm input {
+    margin: 10px; 
+}
+  #lgForm p {
+    margin: 0px; 
+    width: 100%;
 }
 #lgForm input {
   margin: 10px;
@@ -277,6 +284,7 @@ body {
   margin-top: 15px;
   margin-bottom: 15px;
   align-items: center; }
+<<<<<<< HEAD
 .checkForm input {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -284,11 +292,21 @@ body {
   margin-left: 5px; }
 .checkForm p {
   margin: 0px; }
+=======
+  .checkForm input {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 5px;
+    margin-left: 5px; }
+  .checkForm p {
+    margin: 0px; }
+>>>>>>> 591138ef749b19a3a1213b4a3141f5cf4e5522b5
 
 #dateContainer {
   padding-top: 0;
   padding-bottom: 0;
   padding-right: 0; }
+<<<<<<< HEAD
 #dateContainer p {
   margin-top: 0px;
   margin-bottom: 0;
@@ -297,15 +315,29 @@ body {
 #dateContainer input {
   margin: 4px;
   width: 115px; }
+=======
+  #dateContainer p {
+    margin-top: 0px;
+    margin-bottom: 0;
+    margin-right: 10px;
+    margin-left: 0; }
+  #dateContainer input {
+    margin: 4px;
+    width: 115px; }
+>>>>>>> 591138ef749b19a3a1213b4a3141f5cf4e5522b5
 
 #headText {
   height: fit-content;
   text-align: center;
   color: white;
   margin: 0 auto;
-  align-self: center;
+  align-self: center; 
 }
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 591138ef749b19a3a1213b4a3141f5cf4e5522b5
 #headText .row {
   text-align: center;
 }
