@@ -23,7 +23,7 @@ class SaleController extends DBConnection{
         $this->uploaded = false;
         $this->response = 'never set';
         session_start();
-        $this->sellerID = 1;//$_SESSION['id'];
+        $this->sellerID = $_SESSION['id'];
         $this->isAuction = $_POST['isAuction'];
         //set sql query strings
         $this->setupSQLStrings();
