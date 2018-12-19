@@ -1,12 +1,12 @@
 <?PHP
 //require_once("./include/membersite_config.php");
-if(isset($_POST['submitted']))
+/*if(isset($_POST['submitted']))
 {
    if($fgmembersite->Login())
    {
         $fgmembersite->RedirectToURL("index.php");
    }
-}
+}*/
     include "includes/header.php";
 ?>
 
@@ -64,7 +64,7 @@ if(isset($_POST['submitted']))
                 <input type="checkbox" class="custom-control-input" id="customCheck1">
                 <label class="custom-control-label" for="customCheck1">Remember password</label>
               </div>
-              <button id="submitBtn" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign Up</button>
+              <button id="submitBtn" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onclick="" >Sign Up</button>
               <hr class="my-4">
               
               <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Register with Google</button>

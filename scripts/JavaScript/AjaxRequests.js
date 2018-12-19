@@ -16,7 +16,7 @@ function initalizeRequest(fData){
             break;
         case 'userRegistration':
             console.debug('registration script selected');
-            urlRequest = 'scripts/RegistrationDB.php';
+            urlRequest = 'http://localhost/Auction-App/scripts/RegistrationDB.php';
             requestType = 'POST';
             result = true;
             break;
@@ -63,7 +63,7 @@ function executeRequest(fData){
             
         },
         error:function(xhrm, statusText){
-            console.debug("Error: " + statusText);
+            console.debug("Error: " + xhrm.status + " " + statusText);
         }
         
     });

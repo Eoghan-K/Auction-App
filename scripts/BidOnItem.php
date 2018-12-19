@@ -8,6 +8,7 @@ class BidOnItem extends DBConnection{
     private $response;
 
     public function __construct(){
+        
         $this->itemId = $_POST['itemId'];
         //get from session
         session_start();
@@ -38,8 +39,8 @@ class BidOnItem extends DBConnection{
             $PDOConnection = $this->getConnection();
             $query = $PDOConnection->prepare($this->SQLSelectAuction);
                 $query->execute(array('itemId'=>$this->itemId));
-                $auc = $query->fetchALL(PDO::FETCH_ASSOC);
-            if($auc['bid_amount'] >= $this->bidAmount ){
+                $auc = $query->fetch();
+            if($auc['current_offer'] >= $this->bidAmount ){
                 $this->response = "The Cheek of you, the value entered must be higher than the current offer";
             }else if($this->bidderId == $auc['seller_id']){
                 $this->response = "SNEAKY, you cannot bid on your own item, nice try tho";
@@ -72,6 +73,7 @@ class BidOnItem extends DBConnection{
 
 
 }
-
+$bid = new BidOnItem();
+$bid->addBidToDB();
 
 ?>
