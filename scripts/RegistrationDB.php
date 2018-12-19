@@ -19,6 +19,7 @@ class Registration extends DBConnection{
     
     
     public function __construct(){
+        
         $this->config = "SoSalty";
         //ensure all user posted data is safe to store in database
         $stringArr = $this->validateAndSanitize();
@@ -32,6 +33,9 @@ class Registration extends DBConnection{
         
         if(!$this->beginQuery($this->sql, $values, false)){
             $arr['message'] = 'success';
+            return json_encode($arr);
+        }else{
+            $arr['message'] = 'failed';
             return json_encode($arr);
         }
 

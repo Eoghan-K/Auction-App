@@ -38,12 +38,12 @@
                 </li>
             <?php } else { ?>
                 <li class="nav-item">
-                    <a class="nav-link " href="../login.php">
+                    <a class="nav-link " href="./login.php">
                         <button type="button" class="btn btn-success">Login</button>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " href="./Registration.php">
+                    <a class="nav-link " href="./registration.php">
                         <button type="button" class="btn btn-success">Sign Up</button>
                     </a>
                 </li>

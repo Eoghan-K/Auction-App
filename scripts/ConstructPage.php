@@ -68,7 +68,7 @@ class ConstructPage{
                 
                 //now that all nessicary data is gathered its time to print to screen
                 
-                ?><a href="#" class="col-12 col-sm-6 col-md-3" title="'<?php echo $itemName ?>">
+                ?><a href="#" class="col-12 col-sm-6 col-md-3" >
                         <div class="card">
                           <img class="card-img-top" src="<?php echo $this->config["saleImages"] . $imgUrl;?>" alt="<?=$imageName ?>">
                           <div class="card-body">
@@ -112,7 +112,7 @@ class ConstructPage{
                 //this is so if file structer is ever changed the database will not have to be updated
                 $imgUrl = $this->itemArray[$i]['image_url'];
                 $itemName = $this->itemArray[$i]['item_name'];
-                $price = $this->itemArray[$indexCols]['price']
+                $price = $this->itemArray[$i]['price']
                 //now that all nessicary data is gathered its time to print to screen
                 
                 ?>

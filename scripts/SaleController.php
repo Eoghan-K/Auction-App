@@ -23,7 +23,7 @@ class SaleController extends DBConnection{
         $this->uploaded = false;
         $this->response = 'never set';
         session_start();
-        $this->sellerID = $_SESSION['id'];
+        $this->sellerID = 1;//$_SESSION['id'];
         $this->isAuction = $_POST['isAuction'];
         //set sql query strings
         $this->setupSQLStrings();
@@ -58,7 +58,7 @@ class SaleController extends DBConnection{
         $this->sqlDeleteSounds = "DELETE item_sounds FROM item_sounds WHERE item_id = :itemId";
         $this->sqlDeleteSale = "DELETE item FROM item WHERE item_id = :itemId";
         //select all columns from row where the item id and current logged in user id matches a table entry
-        $this->sqlSelectItem = "SELECT * FROM item WHERE item_id = :itemId AND users.user_id = :sellerId";
+        $this->sqlSelectItem = "SELECT * FROM item JOIN users ON item.seller_id = users.user_id WHERE item_id = :itemId AND users.user_id = :sellerId";
         $this->sqlUpdateDetails = "UPDATE item SET item_name = :itemName, item_keywords = :itemKeywords, item_short_description = :shortDescription, 
         item_description = :fullDescription, starting_price = :price, delivery_cost = :deliveryCost WHERE item_id = :itemId";
 
@@ -153,21 +153,26 @@ class SaleController extends DBConnection{
         $PDOConnection;
         $query;
         $itemId = $_POST['item_id'];
+       
         try{
             $PDOConnection = $this->getConnection();
+            $PDOConnection->beginTransaction();
+            
             $query = $PDOConnection->prepare($this->sqlSelectItem);
             $query->execute(array('itemId'=>$itemId, 'sellerId'=>$this->sellerID));
             $result = $query->fetch();
+            //print_r($result);
             $this->checkUpdated($result);
             //the query will only retrieve row where the user and item id match 
             //so if its null then the user does not own the item
             //NOTE must change to webtoken as Id is not safe
             if($result !== null && $result['item_id'] !== null){
+                
                 $query = $PDOConnection->prepare($this->sqlUpdateDetails);
                 $query->execute(array('itemName'=>$this->itemName,'itemKeywords'=>$this->keywords, 'shortDescription'=>$this->shortDescription, 'fullDescription'=>$this->fullDescription, 'price'=>$this->itemPrice,'deliveryCost'=>$this->deliveryCost,'itemId'=>$itemId));
                 
                 $query = $PDOConnection->prepare($this->sqlUpdateSounds);
-                $query->execute(array('itemSounds'=>$this->nameSound,'keywordsSound'=>$this->keywordSound));
+                $query->execute(array('itemSound'=>$this->nameSound,'keywordsSound'=>$this->keywordSound, 'itemId'=>$itemId));
                 
                 if($this->imagesPresent){
                     $count = sizeof($this->imageDetails);
@@ -185,15 +190,19 @@ class SaleController extends DBConnection{
 
                 if($this->isAuction === true || $this->isAuction === "true"){
                     $query = $PDOConnection->prepare($this->sqlUpdateAuction);
-                    $query->execute(array('price'=>$this->itemPrice,'itemId'=>$this->$itemId));
+                    $query->execute(array('price'=>$this->itemPrice,'itemId'=>$itemId));
                 }
+                
                 $this->response = "success";
+                $PDOConnection->commit();
+            }else{
+                $this->response = "You do not own this item";
+                $PDOConnection->rollBack();
             }
-            $this->response = "You do not own this item";
-            $PDOConnection->rollBack();
             //TODO: if items title or keywords have been updated then update the items sound
             //REMINDER: do not update auction table unless item has not been bidded on
         }catch(PDOException $e){
+
             $PDOConnection->rollBack();
             //after rollback we must remove the images and related rows in the table
             $this->response = "rolled back: " . $e->getMessage();
@@ -205,13 +214,13 @@ class SaleController extends DBConnection{
 
     private function checkUpdated($res){
         //check if items are set if they are keep the new entry if not get the database entry to ensure data in the database is not overwritten by null or ""
-        $this->itemName = isset($this->itemName) && trim($this->itemName) !== "" ? $this->itemName : $res['item_name'];
+        $this->itemName = isset($this->itemName) ? $this->itemName : $res['item_name'];
         $this->deliveryCost = isset($this->deliveryCost) ? $this->deliveryCost : $res['delivery_cost'];
-        $this->shortDescription = isset($this->shortDescription) && trim($this->itemName) !== "" ? $this->shortDescription : $res['item_short_description'];
-        $this->fullDescription = isset($this->fullDescription) && trim($this->itemName) !== "" ? $this->fullDescription : $res['item_description'];
-        $this->keywords = isset($this->keywords) && trim($this->itemName) !== "" ? $this->keywords : $res['item_keywords'];
-        $this->condition = isset($this->condition) && trim($this->itemName) !== "" ? $this->condition : $res['item_condition'];
-
+        $this->shortDescription = isset($this->shortDescription) ? $this->shortDescription : $res['item_short_description'];
+        $this->fullDescription = isset($this->fullDescription) ? $this->fullDescription : $res['item_description'];
+        $this->keywords = isset($this->keywords) ? $this->keywords : $res['item_keywords'];
+        $this->condition = isset($this->condition) ? $this->condition : $res['item_condition'];
+        $this->itemPrice = isset($this->itemPrice) ? $this->itemPrice : $res['starting_price'];
         
     }
 
@@ -262,19 +271,21 @@ class SaleController extends DBConnection{
             $this->response = "rolled back: " . $e->getMessage();
             //redirect to another page and display error
         }
+        $arr['message'] = $this->response;
+        echo json_encode($arr);
     }
 
     public function getAndSanitizeVars(){
         //get all variables from the post and sanitize them
-        $this->itemName = $this->validateAndSanitize($_POST['item_name']);
-        $this->itemPrice = $this->validateAndSanitize($_POST['item_price'], 'float');
-        $this->deliveryCost = $this->validateAndSanitize($_POST['delivery_price'], 'float');
-        $this->shortDescription = $this->validateAndSanitize($_POST['short_description']);
-        $this->fullDescription = $this->validateAndSanitize($_POST['full_description']);
-        $this->keywords = $this->validateAndSanitize($_POST['keywords']);
-        $this->condition = $this->validateAndSanitize($_POST['condition']);
+        $this->itemName = $this->validateAndSanitize(isset($_POST['item_name']) ? $_POST['item_name'] : null);
+        $this->itemPrice = $this->validateAndSanitize(isset($_POST['item_price']) ? $_POST['item_price'] : null, 'float');
+        $this->deliveryCost = $this->validateAndSanitize(isset($_POST['delivery_price']) ? $_POST['delivery_price'] : null, 'float');
+        $this->shortDescription = $this->validateAndSanitize(isset($_POST['short_description']) ? $_POST['short_description'] : null);
+        $this->fullDescription = $this->validateAndSanitize(isset($_POST['full_description'])? $_POST['full_description'] : null);
+        $this->keywords = $this->validateAndSanitize(isset($_POST['keywords']) ? $_POST['keywords'] : null);
+        $this->condition = $this->validateAndSanitize(isset($_POST['condition']) ? $_POST['condition'] : null);
         if($this->isAuction === true || $this->isAuction === "true"){
-            $this->endDate = $this->validateAndSanitize($_POST['date'], "date");
+            $this->endDate = $this->validateAndSanitize(isset($_POST['date']) ? $_POST['date'] : null , "date");
         }
        
     }
@@ -343,7 +354,7 @@ if($_POST['action'] === "POST"){
     $controller->getAndSanitizeVars();
     $res = $controller->processSale();
     if($res === "NotLoggedIn"){
-        $arr['message'] = "NotLoggedIn";
+        $arr['message'] === "NotLoggedIn";
         echo json_encode($arr);
     }else{
         $controller->createSale();
@@ -354,7 +365,7 @@ if($_POST['action'] === "POST"){
     //check, clean and set variables
     $controller->getAndSanitizeVars();
     $res = $controller->processSale();
-    if($res = "NotLoggedIn"){
+    if($res === "NotLoggedIn"){
         $arr['message'] = "NotLoggedIn";
         echo json_encode($arr);
     }else{
