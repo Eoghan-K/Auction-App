@@ -14,8 +14,8 @@
 		public function __construct( $id ) {
 			$this->id = $id;
 			$root = $_SERVER[ 'DOCUMENT_ROOT' ];
-			$this->updatePath( $root . '/Config.ini' );
-			$this->config = parse_ini_file( $root . '/Config.ini' );
+			$this->updatePath('Config.ini' );
+			$this->config = parse_ini_file('Config.ini' );
 			$this->PDOConnection = $this->getConnection();
 			$this->item = $this->findItem();
 			$this->images = $this->findImages( $this->item[ "item_id" ] );
