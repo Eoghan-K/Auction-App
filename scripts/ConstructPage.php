@@ -65,10 +65,11 @@ class ConstructPage{
                 $imgUrl = isset($this->itemArray[$indexCols]['image_url']) ? $this->itemArray[$indexCols]['image_url'] : "1.jpg";
                 $itemName = $this->itemArray[$indexCols]['item_name'];
                 $price = $this->itemArray[$indexCols]['price'];
+                $id = $this->itemArray[$indexCols]['item_id'];
                 
                 //now that all nessicary data is gathered its time to print to screen
                 
-                ?><a href="#" class="col-12 col-sm-6 col-md-3" >
+                ?><a href="<?php echo $id ?>" class="col-12 col-sm-6 col-md-3" >
                         <div class="card">
                           <img class="card-img-top" src="<?php echo $this->config["saleImages"] . $imgUrl;?>" alt="<?=$imageName ?>">
                           <div class="card-body">
