@@ -1,8 +1,8 @@
 <?php
     include "includes/header.php";
-    if ( !($GLOBALS[ 'isLoggedIn' ] )) {
+if ( !($GLOBALS[ 'isLoggedIn' ] )) {
         header( 'location: ./login.php' );
-    }
+}
 ?>
     
     <div class="container user-panel">
@@ -22,7 +22,17 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h6>About</h6>
-                                <p>enter some about info</p>
+                                <A href="#" id="About">enter some about info</A>
+								
+								<script>
+								$('About').editable({
+										type: 'textarea'
+										pk: 1,
+										name: 'userPage.php2,
+										title: 'Enter Your about Section'
+								})
+								</script>
+								
                             </div>
                             
                             <div class="col-md-12">
