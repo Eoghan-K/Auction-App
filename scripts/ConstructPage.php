@@ -69,7 +69,7 @@ class ConstructPage{
                 
                 //now that all nessicary data is gathered its time to print to screen
                 
-                ?><a href="<?php echo $id ?>" class="col-12 col-sm-6 col-md-3" >
+                ?><a href="../item.php?id=<?php echo $id ?>" class="col-12 col-sm-6 col-md-3" >
                         <div class="card">
                           <img class="card-img-top" src="<?php echo $this->config["saleImages"] . $imgUrl;?>" alt="<?=$imageName ?>">
                           <div class="card-body">
