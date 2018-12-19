@@ -73,7 +73,7 @@
                     }else{
                         return true;
                     }
-                }catch(Exception $e){
+                }catch(PDOException $e){
                     //NOTE these errors will eventually have to be moved to an error log
                     die("Something has gone wrong when trying to query the database: " . $e->getMessage());
                 }

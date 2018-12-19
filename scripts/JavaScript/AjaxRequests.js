@@ -16,7 +16,17 @@ function initalizeRequest(fData){
             break;
         case 'userRegistration':
             console.debug('registration script selected');
-            urlRequest = 'http://localhost/Auction-App/scripts/RegistrationDB.php';
+            urlRequest = 'scripts/RegistrationDB.php';
+            requestType = 'POST';
+            result = true;
+            break;
+        case 'purchase':
+            urlRequest = 'scripts/PurchaseItem.php';
+            requestType = 'POST';
+            result =true;
+            break;
+        case 'bid':
+            urlRequest = 'scripts/BidOnItem.php'
             requestType = 'POST';
             result = true;
             break;

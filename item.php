@@ -6,6 +6,7 @@
 	$images = null;
 	
 	if ( isset( $_GET[ "id" ] ) ) {
+		
 		$id = $_GET[ "id" ];
 		$i = new Item( $id );
 		$item = $i->getItem();
@@ -54,7 +55,7 @@
 <!--	</div>-->
 	
 	<div class="container text-center">
-		<h3><?php echo $item['item_name'] ?></h3><br>
+		<h3><?php echo $item['item_name'] ?><echo print_r($_GET);h3><br>
 		<div class="row">
 			<?php  for ($j = 0; $j < sizeof($images); $j++){ ?>
 				<div class="col-sm-4">
@@ -75,10 +76,26 @@
 				</div>
 			</div>
 		</div>
+		<div class="row">
 		
-	</div>
+			<?php if($item['auction_id'] === "0"){ ?>
+			<button type="button" onclick="purchaseItem(<?=$id?>)" class="btn btn-success">purchase Item</button>
+			<?php	}else{	?>
+			<!--move styles to css when finished-->
+			<input type="text" id="bidAmount" placeholder="bid amount" style="width:160px;"/>
+			<input type="text" id="bidGroup" placeholder="bid group" style="width:160px;"/>
+			<button type="button" onclick="bidonItem(<?=$id?>)" class="btn btn-success">Place bid</button>
+			<?php } ?>
 
+		</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" ></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="scripts/JavaScript/AjaxRequests.js"></script>
+	<script src="scripts/JavaScript/itemPage.js"></script>
 <?php
+	
 	include "includes/footer.php";
 
 ?>
